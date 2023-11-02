@@ -1,11 +1,14 @@
 package objetivoapp.rollsix;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import java.util.ArrayList;
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "my_database.db";
@@ -71,8 +74,7 @@ public class Database extends SQLiteOpenHelper {
         // Handle database upgrades as needed
     }
 
-
-  /*  public void insertJugador(Player player) {
+    public void insertJugador(Player player) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -193,5 +195,46 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return historialPartidas;
     }
-*/
+
+
+
+
+    //RXJAVA
+
+
+    // Insertar una nueva partida en la tabla "partida" de manera asíncrona usando RXJava
+    public Completable insertPartidaAsync(int idJugador, int ganancias) {
+        return Completable.fromAction(() -> insertPartida(idJugador, ganancias))
+                .subscribeOn(Schedulers.io());
+    }
+
+    // Insertar un jugador de manera asíncrona usando RXJava
+    public Completable insertJugadorAsync(Player player) {
+        return Completable.fromAction(() -> insertJugador(player))
+                .subscribeOn(Schedulers.io());
+    }
+
+    // Verificar si un jugador existe de manera asíncrona usando RXJava
+    public Observable<Boolean> existeJugadorAsync(String email, String password) {
+        return Observable.fromCallable(() -> existeJugador(email, password))
+                .subscribeOn(Schedulers.io());
+    }
+
+    // Obtener datos del jugador de manera asíncrona usando RXJava
+    public Observable<Player> obtenerDatosJugadorAsync(String email, String password) {
+        return Observable.fromCallable(() -> obtenerDatosJugador(email, password))
+                .subscribeOn(Schedulers.io());
+    }
+
+    // Actualizar datos de un jugador de manera asíncrona usando RXJava
+    public Completable updatePlayerAsync(Player player) {
+        return Completable.fromAction(() -> updatePlayer(player))
+                .subscribeOn(Schedulers.io());
+    }
+
+    // Obtener el historial de partidas de manera asíncrona usando RXJava
+    public Observable<ArrayList<Partida>> obtenerHistorialCompletoAsync() {
+        return Observable.fromCallable(this::obtenerHistorialCompleto)
+                .subscribeOn(Schedulers.io());
+    }
 }
