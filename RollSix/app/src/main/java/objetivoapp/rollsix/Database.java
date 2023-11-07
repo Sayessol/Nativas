@@ -132,11 +132,12 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             String id = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID));
             String userEmail = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
+            String userPassword = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
             String saldo = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SALDO));
 
             // Como el historial de partidas ahora está en una tabla separada, no se recupera aquí
 
-            player = new Player(id, userEmail, saldo, null); // No se recupera el historial en esta función
+            player = new Player(id, userEmail, userPassword, Integer.parseInt(saldo)); // No se recupera el historial en esta función
         }
 
         cursor.close();
