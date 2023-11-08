@@ -164,6 +164,8 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
+
+    //RXJAVA
     public Observable<Object> obtenerPartidasPorIdJugadorRx(String idJugador) {
         return Observable.create(emitter -> {
             ArrayList<String> partidasJugador = new ArrayList<>();
@@ -203,81 +205,6 @@ public class Database extends SQLiteOpenHelper {
         }).subscribeOn(Schedulers.io());
     }
 
-
-
- /*   public ArrayList<Partida> obtenerHistorialCompleto() {
-        ArrayList<Partida> historialPartidas = new ArrayList<Partida>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String[] projection = {
-                COLUMN_PARTIDA_ID,
-                COLUMN_JUGADOR_ID,
-                COLUMN_GANANCIAS
-        };
-
-        Cursor cursor = db.query(
-                TABLE_PARTIDA,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        while (cursor.moveToNext()) {
-            String partidaId = String.valueOf(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID));
-            String jugadorId = String.valueOf(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID));
-            String ganancias = String.valueOf(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS));
-
-            Partida partida = new Partida(partidaId, jugadorId, ganancias);
-            historialPartidas.add(partida);
-        }
-
-        cursor.close();
-        return historialPartidas;
-    }*/
-
-
-
-
-    //RXJAVA
-
-
-    // Insertar una nueva partida en la tabla "partida" de manera asíncrona usando RXJava
-    public Completable insertPartidaAsync(int idJugador, int ganancias) {
-        return Completable.fromAction(() -> insertPartida(idJugador, ganancias))
-                .subscribeOn(Schedulers.io());
-    }
-
-    // Insertar un jugador de manera asíncrona usando RXJava
-    public Completable insertJugadorAsync(Player player) {
-        return Completable.fromAction(() -> insertJugador(player))
-                .subscribeOn(Schedulers.io());
-    }
-
-    // Verificar si un jugador existe de manera asíncrona usando RXJava
-    public Observable<Boolean> existeJugadorAsync(String email, String password) {
-        return Observable.fromCallable(() -> existeJugador(email, password))
-                .subscribeOn(Schedulers.io());
-    }
-
-    // Obtener datos del jugador de manera asíncrona usando RXJava
-    public Observable<Player> obtenerDatosJugadorAsync(String email, String password) {
-        return Observable.fromCallable(() -> obtenerDatosJugador(email, password))
-                .subscribeOn(Schedulers.io());
-    }
-
-    public Observable<ArrayList<String>> obtenerHistorialAsync(String s) {
-        return Observable.fromCallable(() -> obtenerPartidasPorIdJugador(s))
-                .subscribeOn(Schedulers.io());
-    }
-
-    // Actualizar datos de un jugador de manera asíncrona usando RXJava
-    public Completable updatePlayerAsync(Player player) {
-        return Completable.fromAction(() -> updatePlayer(player))
-                .subscribeOn(Schedulers.io());
-    }
 
 
     //Carga de datos
@@ -371,41 +298,5 @@ public class Database extends SQLiteOpenHelper {
 
         cursor.close();
         return jugador;
-    }
-
-    public ArrayList<String> obtenerPartidasPorIdJugador(String idJugador) {
-        ArrayList<String> partidasJugador = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String[] projection = {
-                COLUMN_PARTIDA_ID,
-                COLUMN_JUGADOR_ID,
-                COLUMN_GANANCIAS
-        };
-
-        String selection = COLUMN_JUGADOR_ID + " = ?";
-        String[] selectionArgs = { idJugador };
-
-        Cursor cursor = db.query(
-                TABLE_PARTIDA,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-
-        while (cursor.moveToNext()) {
-            String partidaId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID)));
-            String jugadorId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID)));
-            String ganancias = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS)));
-
-            //Partida partida = new Partida(partidaId,jugadorId,ganancias);
-            partidasJugador.add("En la partida ID :" + partidaId + ", el JugadorID " + jugadorId + " ha ganado " + ganancias);
-        }
-
-        cursor.close();
-        return partidasJugador;
     }
 }
