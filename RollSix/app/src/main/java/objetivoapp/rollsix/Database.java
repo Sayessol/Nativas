@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -185,9 +187,9 @@ public class Database extends SQLiteOpenHelper {
         );
 
         while (cursor.moveToNext()) {
-            int partidaId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID));
-            int jugadorId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID));
-            int ganancias = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS));
+            String partidaId = String.valueOf(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID));
+            String jugadorId = String.valueOf(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID));
+            String ganancias = String.valueOf(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS));
 
             Partida partida = new Partida(partidaId, jugadorId, ganancias);
             historialPartidas.add(partida);
@@ -235,7 +237,136 @@ public class Database extends SQLiteOpenHelper {
 
     // Obtener el historial de partidas de manera asíncrona usando RXJava
     public Observable<ArrayList<Partida>> obtenerHistorialCompletoAsync() {
-        return Observable.fromCallable(this::obtenerHistorialCompleto)
+        return Observable.fromCallable(this::obtenerPartidasPorIdJugador)
                 .subscribeOn(Schedulers.io());
+    }
+
+    //Carga de datos
+
+    // Función para cargar datos de jugadores y partidas
+    public void cargarDatos() {
+        // Insertar jugadores
+        insertJugador(new Player("1", "jugador1@email.com", "password1", 1000)); // Reemplaza con los valores deseados
+        insertJugador(new Player("2", "jugador2@email.com", "password2", 1500)); // Reemplaza con los valores deseados
+
+        // Insertar partidas asociadas a los jugadores
+        insertPartida(1, 500); // Aquí asumo que el jugador 1 tiene la ID 1
+        insertPartida(1, 700); // Estas son partidas del jugador 1
+        insertPartida(2, 800); // Aquí asumo que el jugador 2 tiene la ID 2
+        insertPartida(2, 1200); // Estas son partidas del jugador 2
+    }
+
+
+   // Obtener los datos de un jugador por su ID
+    public Player obtenerJugadorPorId(String playerId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Player player = null;
+
+        String[] projection = {
+                COLUMN_ID,
+                COLUMN_EMAIL,
+                COLUMN_PASSWORD,
+                COLUMN_SALDO
+        };
+
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = { playerId };
+
+        Cursor cursor = db.query(
+                TABLE_PLAYER,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (cursor.moveToFirst()) {
+            String id = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID));
+            String userEmail = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
+            String userPassword = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
+            String saldo = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SALDO));
+
+            player = new Player(id, userEmail, userPassword, Integer.parseInt(saldo));
+        }
+
+        cursor.close();
+        return player;
+    }
+
+
+    // Obtener un jugador por su email
+    public Player obtenerJugadorPorEmail(String emailJugador) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Player jugador = null;
+
+        String[] projection = {
+                COLUMN_ID,
+                COLUMN_EMAIL,
+                COLUMN_PASSWORD,
+                COLUMN_SALDO
+        };
+
+        String selection = COLUMN_EMAIL + " = ?";
+        String[] selectionArgs = { emailJugador };
+
+        Cursor cursor = db.query(
+                TABLE_PLAYER,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (cursor.moveToFirst()) {
+            String id = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ID));
+            String userEmail = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
+            String userPassword = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
+            String saldo = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SALDO));
+
+            jugador = new Player(id, userEmail, userPassword, Integer.parseInt(saldo));
+        }
+
+        cursor.close();
+        return jugador;
+    }
+
+    public ArrayList<String> obtenerPartidasPorIdJugador(String idJugador) {
+        ArrayList<String> partidasJugador = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                COLUMN_PARTIDA_ID,
+                COLUMN_JUGADOR_ID,
+                COLUMN_GANANCIAS
+        };
+
+        String selection = COLUMN_JUGADOR_ID + " = ?";
+        String[] selectionArgs = { idJugador };
+
+        Cursor cursor = db.query(
+                TABLE_PARTIDA,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            String partidaId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID)));
+            String jugadorId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID)));
+            String ganancias = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS)));
+
+            //Partida partida = new Partida(partidaId,jugadorId,ganancias);
+            partidasJugador.add("En la partida ID :" + partidaId + ", el JugadorID " + jugadorId + " ha ganado " + ganancias);
+        }
+
+        cursor.close();
+        return partidasJugador;
     }
 }

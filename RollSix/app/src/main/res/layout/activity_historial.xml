@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Email del jugador en la esquina superior izquierda -->
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="Email del jugador" />
+
+    <!-- Saldo del jugador en la esquina superior derecha -->
+    <TextView
+        android:id="@+id/saldoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="Saldo" />
+
+    <!-- Título "Historial" más grande y centrado en la parte superior -->
+    <TextView
+        android:id="@+id/tituloTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/emailTextView"
+        android:padding="16dp"
+        android:text="Historial"
+        android:textSize="24sp" />
+
+    <!-- Listbox para mostrar los datos del historial -->
+    <ListView
+        android:id="@+id/historialListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tituloTextView"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="56dp" /> <!-- Hacemos espacio para el botón -->
+
+    <!-- Botón para terminar la aplicación -->
+    <Button
+        android:id="@+id/botonCerrar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Cerrar Aplicación" />
+
+</RelativeLayout>

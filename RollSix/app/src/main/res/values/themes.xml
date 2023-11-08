@@ -6,6 +6,7 @@
     </style>
 
     <style name="Theme.RollSix" parent="Base.Theme.RollSix" />
+
     <style name="SplashScreen" parent="Theme.RollSix">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>

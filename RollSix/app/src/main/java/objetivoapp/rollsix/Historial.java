@@ -1,0 +1,77 @@
+package objetivoapp.rollsix;
+
+import static java.security.AccessController.getContext;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+
+public class Historial extends Activity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_historial); // Así asumimos que el XML se llama "layout_principal"
+
+        // Aquí se hace la referencia a tu botón y se agrega el Listener para cerrar la aplicación
+        Button botonCerrar = findViewById(R.id.botonCerrar);
+        botonCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cierra la aplicación al presionar el botón "Cerrar Aplicación"
+                finish();
+            }
+        });
+
+
+        // Recibir los datos del jugador pasados desde la actividad anterior
+        Intent intent = getIntent();
+        String emailUsuario = intent.getStringExtra("EMAIL_USUARIO");
+        String saldo = intent.getStringExtra("SALDO");
+
+        // Mostrar los datos en los TextView correspondientes en la actividad Historial
+        TextView emailTextView = findViewById(R.id.emailTextView);
+        emailTextView.setText(emailUsuario);
+
+        TextView saldoTextView = findViewById(R.id.saldoTextView);
+        saldoTextView.setText(saldo);
+        // Referencia al ListView
+        ListView historialListView = findViewById(R.id.historialListView);
+
+        Database database = new Database(this);
+
+        // Obtener el jugador por su email
+        Player jugador = database.obtenerJugadorPorEmail(emailUsuario);
+
+        if (jugador != null) {
+            // Obtener el id del jugador
+            String idJugador = jugador.getId();
+            // Mostrar el valor de idJugador en un Toast
+            Toast.makeText(getApplicationContext(), "El ID del jugador es: " + idJugador, Toast.LENGTH_LONG).show();
+
+            // Resto del código...
+            // Obtener la lista de partidas asociadas al jugador por su id
+            ArrayList<String> partidasJugador = database.obtenerPartidasPorIdJugador(idJugador);
+
+            // Llenar la ListView con las partidas obtenidas
+            historialListView = findViewById(R.id.historialListView);
+
+            // Crear un ArrayAdapter para mostrar los datos en el ListView
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, partidasJugador);
+
+            // Establecer el adaptador para el ListView
+            historialListView.setAdapter(adapter);
+        }
+    }
+}

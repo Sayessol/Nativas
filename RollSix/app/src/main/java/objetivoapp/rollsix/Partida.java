@@ -2,39 +2,39 @@ package objetivoapp.rollsix;
 
 public class Partida {
 
-    private int partidaId;
-    private int jugadorId;
-    private int ganancias;
+    private String partidaId;
+    private String jugadorId;
+    private String ganancias;
 
     // Constructor
-    public Partida(int partidaId, int jugadorId, int ganancias) {
+    public Partida(String partidaId, String jugadorId, String ganancias) {
         this.partidaId = partidaId;
         this.jugadorId = jugadorId;
         this.ganancias = ganancias;
     }
 
     // Getters y setters
-    public int getPartidaId() {
+    public String getPartidaId() {
         return partidaId;
     }
 
-    public void setPartidaId(int partidaId) {
+    public void setPartidaId(String partidaId) {
         this.partidaId = partidaId;
     }
 
-    public int getJugadorId() {
+    public String getJugadorId() {
         return jugadorId;
     }
 
-    public void setJugadorId(int jugadorId) {
+    public void setJugadorId(String jugadorId) {
         this.jugadorId = jugadorId;
     }
 
-    public int getGanancias() {
+    public String getGanancias() {
         return ganancias;
     }
 
-    public void setGanancias(int ganancias) {
+    public void setGanancias(String ganancias) {
         this.ganancias = ganancias;
     }
 
