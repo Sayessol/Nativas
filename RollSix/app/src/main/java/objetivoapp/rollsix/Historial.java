@@ -1,12 +1,10 @@
 package objetivoapp.rollsix;
 
-import static java.security.AccessController.getContext;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,7 +12,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class Historial extends Activity {
 
@@ -59,6 +60,21 @@ public class Historial extends Activity {
             // Mostrar el valor de idJugador en un Toast
             Toast.makeText(getApplicationContext(), "El ID del jugador es: " + idJugador, Toast.LENGTH_LONG).show();
 
+            // En tu método dentro del Activity
+            Disposable disposable = database.obtenerPartidasPorIdJugadorRx(idJugador)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(partidasJugador -> {
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(() -> {
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                                    android.R.layout.simple_list_item_1, (List) partidasJugador);
+
+                            historialListView.setAdapter(adapter);
+                        });
+                    }, throwable -> {
+                        // Manejo de errores
+                    });
+/*
             // Resto del código...
             // Obtener la lista de partidas asociadas al jugador por su id
             ArrayList<String> partidasJugador = database.obtenerPartidasPorIdJugador(idJugador);
@@ -71,7 +87,7 @@ public class Historial extends Activity {
                     android.R.layout.simple_list_item_1, partidasJugador);
 
             // Establecer el adaptador para el ListView
-            historialListView.setAdapter(adapter);
+            historialListView.setAdapter(adapter);*/
         }
     }
 }

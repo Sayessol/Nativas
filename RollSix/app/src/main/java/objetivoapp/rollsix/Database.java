@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import io.reactivex.Completable;
@@ -68,7 +67,6 @@ public class Database extends SQLiteOpenHelper {
         long resultado = db.insert(TABLE_PARTIDA, null, values);
         db.close();
     }
-
 
 
     @Override
@@ -166,7 +164,48 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Partida> obtenerHistorialCompleto() {
+    public Observable<Object> obtenerPartidasPorIdJugadorRx(String idJugador) {
+        return Observable.create(emitter -> {
+            ArrayList<String> partidasJugador = new ArrayList<>();
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            String[] projection = {
+                    COLUMN_PARTIDA_ID,
+                    COLUMN_JUGADOR_ID,
+                    COLUMN_GANANCIAS
+            };
+
+            String selection = COLUMN_JUGADOR_ID + " = ?";
+            String[] selectionArgs = {idJugador};
+
+            Cursor cursor = db.query(
+                    TABLE_PARTIDA,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null
+            );
+
+            while (cursor.moveToNext()) {
+                String partidaId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID)));
+                String jugadorId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID)));
+                String ganancias = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS)));
+
+                partidasJugador.add("En la partida ID :" + partidaId + ", el JugadorID " + jugadorId + " ha ganado " + ganancias);
+            }
+
+            cursor.close();
+
+            emitter.onNext(partidasJugador);
+            emitter.onComplete();
+        }).subscribeOn(Schedulers.io());
+    }
+
+
+
+ /*   public ArrayList<Partida> obtenerHistorialCompleto() {
         ArrayList<Partida> historialPartidas = new ArrayList<Partida>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -197,7 +236,7 @@ public class Database extends SQLiteOpenHelper {
 
         cursor.close();
         return historialPartidas;
-    }
+    }*/
 
 
 
@@ -229,17 +268,17 @@ public class Database extends SQLiteOpenHelper {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Observable<ArrayList<String>> obtenerHistorialAsync(String s) {
+        return Observable.fromCallable(() -> obtenerPartidasPorIdJugador(s))
+                .subscribeOn(Schedulers.io());
+    }
+
     // Actualizar datos de un jugador de manera asíncrona usando RXJava
     public Completable updatePlayerAsync(Player player) {
         return Completable.fromAction(() -> updatePlayer(player))
                 .subscribeOn(Schedulers.io());
     }
 
-    // Obtener el historial de partidas de manera asíncrona usando RXJava
-    public Observable<ArrayList<Partida>> obtenerHistorialCompletoAsync() {
-        return Observable.fromCallable(this::obtenerPartidasPorIdJugador)
-                .subscribeOn(Schedulers.io());
-    }
 
     //Carga de datos
 
