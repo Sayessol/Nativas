@@ -5,6 +5,9 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -22,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import objetivoapp.rollsix.InstruccionesActivity;
 import objetivoapp.rollsix.R;
 import objetivoapp.rollsix.ui.login.LoginViewModel;
 import objetivoapp.rollsix.ui.login.LoginViewModelFactory;
@@ -125,9 +129,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        // Quitar el Toast
+        // String welcome = getString(R.string.welcome) + model.getDisplayName();
+        // Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+
+        // Iniciar la actividad de instrucciones
+        Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
+        startActivity(intent);
+
+        // Finalizar la actividad actual (LoginActivity)
+        finish();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
