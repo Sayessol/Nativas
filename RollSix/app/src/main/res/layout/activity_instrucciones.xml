@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.RollSix.FullscreenContainer"
+    android:background="#000000"
+    tools:context=".InstruccionesActivity">
+
+    <!-- Texto "Instrucciones" en la parte superior -->
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="Instrucciones"
+        android:textColor="#FFFFFF"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <!-- Instrucciones del juego debajo del texto "Instrucciones" -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="- Juego de dados con dos dados"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="- Apuesta basada en si el resultado es mayor o menor a 6"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="- Haz la apuesta e ingresa la cantidad en el recuadro"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="- Selecciona la opción de apuesta que quieres:"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="                  - MAYOR O MENOR QUE 6"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="- Lanza los dados y espera el resultado"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="- Si tu apuesta fue mayor y el resultado es mayor: HAS GANADO! Pero si el resultado es menor...perdiste."
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="- Si tu apuesta es menor y el resultado es menor: HAS GANADO! Pero si el resultado es mayor...perdiste."
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:minHeight="48dp"
+        android:text="Siguiente"
+        android:textColor="#FFFFFF" />
+</LinearLayout>
