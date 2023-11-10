@@ -48,6 +48,7 @@ public class InstruccionesActivity extends AppCompatActivity {
         @Override
         public void run() {
             // Delayed removal of status and navigation bar
+            //hola
             if (Build.VERSION.SDK_INT >= 30) {
                 mContentView.getWindowInsetsController().hide(
                         WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
