@@ -17,13 +17,13 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Database database = new Database(this);
-        //database.cargarDatos();
+        database.cargarDatos();
 
-        /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
-        finish();*/
+        finish();
 
-        Intent intent = new Intent(MainActivity.this, Historial.class);
+        //Intent intent = new Intent(MainActivity.this, Historial.class);
 
         Player jugador = database.obtenerJugadorPorId("1");
 

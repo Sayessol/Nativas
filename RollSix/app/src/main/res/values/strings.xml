@@ -15,6 +15,9 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="resultado_partida">El resultado ha sido %1$d siendo el primer dado un %2$d y el segundo %3$d</string>
+    <string name="resultado_aqui">Resultado aquí</string>
+    <string name="jugar">Jugar</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
