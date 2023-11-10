@@ -22,13 +22,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
 
-
-        /*Intent instruccionesIntent = new Intent(MainActivity.this, InstruccionesActivity.class);
-        startActivity(instruccionesIntent);
-        finish();
-
-        Intent historialIntent = new Intent(MainActivity.this, Historial.class);*/
-
         Player jugador = database.obtenerJugadorPorId("1");
 
         // Hacer lo que necesites con los datos del jugador...
