@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2B872E"
     android:paddingLeft="16dp"
     android:paddingTop="16dp"
     android:paddingRight="16dp"
@@ -21,9 +22,54 @@
 
     <Button
         android:id="@+id/jugarButton"
-        android:layout_width="wrap_content"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/resultadoTextView"
-        android:layout_marginTop="40dp"
-        android:text="@string/jugar" />
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="578dp"
+        android:backgroundTint="#673AB7"
+        android:insetLeft="0dp"
+        android:padding="20dp"
+        android:text="APOSTAR"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="169dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="415dp"
+        android:layout_marginEnd="15dp"
+        android:text="Menor a 6" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="171dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="415dp"
+        android:layout_marginEnd="200dp"
+        android:text="Mayor a 6" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="212dp"
+        android:text="INSERTA TU APUESTA" />
+
+    <EditText
+        android:id="@+id/editTextNumber2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="128dp"
+        android:ems="10"
+        android:inputType="number" />
+
 </RelativeLayout>

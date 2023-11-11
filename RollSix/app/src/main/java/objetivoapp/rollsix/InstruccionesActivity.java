@@ -34,7 +34,7 @@ public class InstruccionesActivity extends AppCompatActivity {
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
      * user interaction before hiding the system UI.
      */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+    private static final int AUTO_HIDE_DELAY_MILLIS = 60000;
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -123,15 +123,16 @@ public class InstruccionesActivity extends AppCompatActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
 
+               Intent intent;
                 if (isLoggedIn) {
                     // El usuario ha iniciado sesión, pasa a la actividad de Historial
-                    Intent intent = new Intent(InstruccionesActivity.this, Historial.class);
-                    startActivity(intent);
+                     intent = new Intent(InstruccionesActivity.this, LogicaJuego.class);
                 } else {
                     // El usuario no ha iniciado sesión, redirige a LoginActivity
-                    Intent intent = new Intent(InstruccionesActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    intent = new Intent(InstruccionesActivity.this, LogicaJuego.class);
                 }
+                    startActivity(intent);
+
             }
         });
     }
@@ -144,7 +145,7 @@ public class InstruccionesActivity extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        delayedHide(90000);
     }
 
     private void toggle() {
