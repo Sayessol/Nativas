@@ -1,4 +1,5 @@
 package objetivoapp.rollsix;
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -6,6 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Random;
 
 public class LogicaJuego extends AppCompatActivity {
+
+    // Variables para almacenar las apuestas (debes configurarlas según tu lógica de apuestas)
+    private boolean apuestaMayor = true;  // Cambia a false si apuestas menor
+    private boolean apuestaMenor = false; // Cambia a true si apuestas menor
+    private boolean apuestaIgual = false; // Cambia a true si apuestas igual
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +49,14 @@ public class LogicaJuego extends AppCompatActivity {
         int suma = dado1 + dado2;
 
         // Lógica del juego
-        if ((suma > 6 && apuestaMayor) || (suma < 6 && apuestaMenor) || (suma == 6 && apuestaIgual)) {
+        if ((suma > 6 && apuestaMayor) || (suma < 6 && apuestaMenor)) {
             return "¡Ganaste!";
+        } else if (suma == 6) {
+            return "Empate! intenta de nuevo";
+        } else if (suma == 6 && apuestaIgual) {
+            return "Has empatado, inténtalo de nuevo";
         } else {
             return "Perdiste. Intenta de nuevo.";
         }
     }
-
-    // Variables para almacenar las apuestas (debes configurarlas según tu lógica de apuestas)
-    private boolean apuestaMayor = true;  // Cambia a false si apuestas menor
-    private boolean apuestaMenor = false; // Cambia a true si apuestas menor
-    private boolean apuestaIgual = false; // Cambia a true si apuestas igual
 }

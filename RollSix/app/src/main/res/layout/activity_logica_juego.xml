@@ -18,6 +18,11 @@
         android:id="@+id/resultadoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#710DBC"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginLeft="65dp"
+        android:textSize="20dp"
         android:text="@string/resultado_aqui" />
 
     <Button
@@ -34,33 +39,26 @@
         android:textSize="25dp" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/menorBtn"
         android:layout_width="169dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="415dp"
         android:layout_marginEnd="15dp"
+        android:clickable="true"
         android:text="Menor a 6" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/mayorBtn"
         android:layout_width="171dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="415dp"
         android:layout_marginEnd="200dp"
+        android:clickable="true"
         android:text="Mayor a 6" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="212dp"
-        android:text="INSERTA TU APUESTA" />
 
     <EditText
         android:id="@+id/editTextNumber2"
@@ -70,6 +68,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="128dp"
         android:ems="10"
+        android:textStyle="bold"
+        android:hint="INSERTA TU APUESTA"
         android:inputType="number" />
 
 </RelativeLayout>
