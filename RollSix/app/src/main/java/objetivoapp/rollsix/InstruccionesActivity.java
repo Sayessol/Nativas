@@ -116,6 +116,10 @@ public class InstruccionesActivity extends AppCompatActivity {
         binding = ActivityInstruccionesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+       /// Recibir los datos del jugador pasados desde la actividad anterior
+        Intent intent = getIntent();
+        String id = intent.getStringExtra("ID_USUARIO");
+
         binding.nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,11 +130,14 @@ public class InstruccionesActivity extends AppCompatActivity {
                Intent intent;
                 if (isLoggedIn) {
                     // El usuario ha iniciado sesión, pasa a la actividad de Historial
+
                      intent = new Intent(InstruccionesActivity.this, LogicaJuego.class);
+
                 } else {
                     // El usuario no ha iniciado sesión, redirige a LoginActivity
                     intent = new Intent(InstruccionesActivity.this, LogicaJuego.class);
                 }
+                intent.putExtra("ID_USUARIO", id);
                     startActivity(intent);
 
             }

@@ -1,5 +1,6 @@
 package objetivoapp.rollsix;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,6 +19,21 @@ public class LogicaJuego extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logica_juego);
+
+        // Recibir los datos del jugador pasados desde la actividad anterior
+        Intent intent = getIntent();
+        String idUsuario = intent.getStringExtra("ID_USUARIO");
+
+        Database database = new Database(this);
+
+        Player jugador = database.obtenerJugadorPorId(idUsuario);
+
+        TextView emailTextView = findViewById(R.id.emailTextView);
+        emailTextView.setText(jugador.getEmail());
+
+        TextView saldoTextView = findViewById(R.id.saldoTextView);
+        int s = jugador.getSaldo();
+        saldoTextView.setText(String.valueOf(s));
 
         // obtener referencia al TextView en tu layout
         TextView resultadoTextView = findViewById(R.id.resultadoTextView);

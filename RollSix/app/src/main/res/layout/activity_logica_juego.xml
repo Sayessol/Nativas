@@ -18,12 +18,31 @@
         android:id="@+id/resultadoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#710DBC"
-        android:textStyle="bold"
-        android:gravity="center"
         android:layout_marginLeft="65dp"
+        android:layout_below="@id/emailTextView"
+        android:gravity="center"
+        android:text="@string/resultado_aqui"
+        android:textColor="#710DBC"
         android:textSize="20dp"
-        android:text="@string/resultado_aqui" />
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="Email del jugador" />
+
+    <!-- Saldo del jugador en la esquina superior derecha -->
+    <TextView
+        android:id="@+id/saldoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="Saldo" />
 
     <Button
         android:id="@+id/jugarButton"
@@ -78,6 +97,8 @@
         android:layout_height="200dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/resultadoTextView"
         android:layout_marginTop="195dp"
         android:layout_marginEnd="35dp"
         android:layout_marginRight="30dp"
