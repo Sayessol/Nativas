@@ -2,6 +2,7 @@ package objetivoapp.rollsix;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Random;
@@ -23,6 +24,10 @@ public class LogicaJuego extends AppCompatActivity {
 
         // obtener referencia al botón en tu layout
         Button jugarButton = findViewById(R.id.jugarButton);
+
+        //Declarar la imagen en la pantalla de juego
+        ImageView myImageView = findViewById(R.id.myIMG);
+        myImageView.setImageResource(R.drawable.dice);
 
         // configurmos el OnClickListener para el botón con expresión lambda porque me daba alerta
         jugarButton.setOnClickListener(v -> {
@@ -60,3 +65,5 @@ public class LogicaJuego extends AppCompatActivity {
         }
     }
 }
+
+
