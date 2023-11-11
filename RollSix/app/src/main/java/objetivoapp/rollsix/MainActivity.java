@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
-            Thread.sleep(3000);
+            Thread.sleep(9000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
