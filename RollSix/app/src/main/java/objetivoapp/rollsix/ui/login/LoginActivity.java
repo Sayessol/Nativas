@@ -25,7 +25,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import objetivoapp.rollsix.Database;
 import objetivoapp.rollsix.InstruccionesActivity;
+import objetivoapp.rollsix.Player;
 import objetivoapp.rollsix.R;
 import objetivoapp.rollsix.ui.login.LoginViewModel;
 import objetivoapp.rollsix.ui.login.LoginViewModelFactory;
@@ -133,8 +135,14 @@ public class LoginActivity extends AppCompatActivity {
         // String welcome = getString(R.string.welcome) + model.getDisplayName();
         // Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
 
+        Database database = new Database(this);
+
+        EditText usernameEditText = binding.username;
         // Iniciar la actividad de instrucciones
         Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
+
+        Player jugador = database.obtenerJugadorPorEmail(usernameEditText.getText().toString());
+        intent.putExtra("ID_USUARIO", jugador.getId()); // Reemplaza emailDelUsuario con el email obtenido
         startActivity(intent);
 
         // Finalizar la actividad actual (LoginActivity)
