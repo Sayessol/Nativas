@@ -2,6 +2,7 @@ package objetivoapp.rollsix;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -98,15 +99,16 @@ public class LogicaJuego extends AppCompatActivity {
 
                         // mostrar resultado en TextView
                         resultadoTextView.setText(partida + "\n" + resultadoFinal);
-                        try {
-                            Thread.sleep(9000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        Intent intent2 = new Intent(LogicaJuego.this, Historial.class);
-                        intent2.putExtra("EMAIL_USUARIO", jugador.getEmail());
-                        intent2.putExtra("SALDO", String.valueOf(jugador.getSaldo()));
-                        startActivity(intent2);
+                        // Introducir una demora de 3 segundos (3000 milisegundos)
+                        new Handler().postDelayed(() -> {
+                            Intent intent2 = new Intent(LogicaJuego.this, Historial.class);
+                            intent2.putExtra("EMAIL_USUARIO", jugador.getEmail());
+                            intent2.putExtra("SALDO", String.valueOf(jugador.getSaldo()));
+                            startActivity(intent2);
+
+                            // Finalizar la actividad actual (LogicaJuego)
+                            finish();
+                        }, 3000); // Ajusta el tiempo de demora según tus preferencias
 
                     } else {
                         // Mostrar mensaje si la apuesta es mayor que el saldo
