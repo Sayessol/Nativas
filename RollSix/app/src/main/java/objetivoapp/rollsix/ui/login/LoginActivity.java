@@ -138,15 +138,24 @@ public class LoginActivity extends AppCompatActivity {
         Database database = new Database(this);
 
         EditText usernameEditText = binding.username;
-        // Iniciar la actividad de instrucciones
-        Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
+        EditText passwordEditText = binding.password; // Asegúrate de tener un campo de contraseña en tu diseño
 
+        // Obtener el jugador de la base de datos
         Player jugador = database.obtenerJugadorPorEmail(usernameEditText.getText().toString());
-        intent.putExtra("ID_USUARIO", jugador.getId()); // Reemplaza emailDelUsuario con el email obtenido
-        startActivity(intent);
 
-        // Finalizar la actividad actual (LoginActivity)
-        finish();
+        // Verificar si el jugador existe y si la contraseña coincide
+        if (jugador != null && jugador.getPassword().equals(passwordEditText.getText().toString())) {
+            // Iniciar la actividad de instrucciones
+            Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
+            intent.putExtra("ID_USUARIO", jugador.getId());
+            startActivity(intent);
+
+            // Finalizar la actividad actual (LoginActivity)
+            finish();
+        } else {
+            // Mostrar mensaje de error si el jugador no existe o la contraseña no coincide
+            Toast.makeText(this, "El correo electrónico o la contraseña no coinciden", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
