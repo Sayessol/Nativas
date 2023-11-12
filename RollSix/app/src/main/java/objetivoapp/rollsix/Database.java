@@ -154,7 +154,7 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_PLAYER, values, COLUMN_ID + " = ?", new String[]{String.valueOf(player.getId())});
     }
 
-    public void updateHistorial(int idJugador, int ganancias) {
+    public void updateHistorial(String idJugador, String ganancias) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_JUGADOR_ID, idJugador);
