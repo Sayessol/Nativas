@@ -29,6 +29,7 @@ import objetivoapp.rollsix.Database;
 import objetivoapp.rollsix.InstruccionesActivity;
 import objetivoapp.rollsix.Player;
 import objetivoapp.rollsix.R;
+import objetivoapp.rollsix.Registrar;
 import objetivoapp.rollsix.ui.login.LoginViewModel;
 import objetivoapp.rollsix.ui.login.LoginViewModelFactory;
 import objetivoapp.rollsix.databinding.ActivityLoginBinding;
@@ -161,4 +162,6 @@ public class LoginActivity extends AppCompatActivity {
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
+
+
 }

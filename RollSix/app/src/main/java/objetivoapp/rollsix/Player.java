@@ -15,6 +15,12 @@ public class Player {
         this.saldo = saldo;
     }
 
+    public Player(String email, String password, int saldo) {
+        this.email = email;
+        this.password = password;
+        this.saldo = saldo;
+    }
+
     // Getters y setters
     public String getId() {
         return id;
