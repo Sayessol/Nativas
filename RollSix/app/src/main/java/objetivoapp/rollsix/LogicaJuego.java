@@ -84,25 +84,34 @@ public class LogicaJuego extends AppCompatActivity {
                             database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
                         }
 
+                        // Actualizar la base de datos y el saldoTextView si el jugador perdió
+                        if (resultadoFinal.equals("Perdiste. Intenta de nuevo.")) {
+                            jugador.setSaldo(jugador.getSaldo() - cantidadApostada);
+                            database.updatePlayer(jugador);
+
+                            // Actualizar saldoTextView
+                            saldoTextView.setText(String.valueOf(jugador.getSaldo()));
+
+                            // Añadir nueva partida a la tabla "partida" con ganancias negativas
+                            database.updateHistorial(jugador.getId(), "-" + cantidadApostada);
+                        }
+
                         // mostrar resultado en TextView
                         resultadoTextView.setText(partida + "\n" + resultadoFinal);
                         try {
-                            Thread.sleep(3000);
+                            Thread.sleep(9000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        Intent intent2 = getIntent();
-                        intent2 = new Intent(LogicaJuego.this, Historial.class);
-                        String email = intent2.getStringExtra(jugador.getEmail());
-                        int s2 = jugador.getSaldo();
-                        String s3 = intent2.getStringExtra(String.valueOf(s2));
-                        intent2.putExtra("EMAIL_USUARIO", email);
-                        intent2.putExtra("SALDO",s3);
+                        Intent intent2 = new Intent(LogicaJuego.this, Historial.class);
+                        intent2.putExtra("EMAIL_USUARIO", jugador.getEmail());
+                        intent2.putExtra("SALDO", String.valueOf(jugador.getSaldo()));
                         startActivity(intent2);
 
                     } else {
                         // Mostrar mensaje si la apuesta es mayor que el saldo
                         Toast.makeText(LogicaJuego.this, "No puedes apostar más dinero del que tienes.", Toast.LENGTH_SHORT).show();
+                        return;
                     }
         });
     }
