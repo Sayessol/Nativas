@@ -147,7 +147,7 @@ public class LogicaJuego extends AppCompatActivity {
 
                 // Finalizar la actividad actual (LogicaJuego)
                 finish();
-            }, 3000); // Ajusta el tiempo de demora según tus preferencias
+            }, 8000); // Ajusta el tiempo de demora según tus preferencias
         });
     }
 
