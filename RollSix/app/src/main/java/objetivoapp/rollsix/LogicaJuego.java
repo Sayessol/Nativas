@@ -48,7 +48,7 @@ public class LogicaJuego extends AppCompatActivity {
 
         //Declarar la imagen en la pantalla de juego
         ImageView myImageView = findViewById(R.id.myIMG);
-        myImageView.setImageResource(R.drawable.dice);
+        myImageView.setImageResource(R.drawable.transpdices);
         EditText editTextNumber = findViewById(R.id.editTextNumber2);
 
         // obtener referencia al botón para apostar MENOR
