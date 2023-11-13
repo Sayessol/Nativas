@@ -108,7 +108,7 @@ public class LogicaJuego extends AppCompatActivity {
 
                             // Finalizar la actividad actual (LogicaJuego)
                             finish();
-                        }, 3000); // Ajusta el tiempo de demora según tus preferencias
+                        }, 90000); // Ajusta el tiempo de demora según tus preferencias
 
                     } else {
                         // Mostrar mensaje si la apuesta es mayor que el saldo
