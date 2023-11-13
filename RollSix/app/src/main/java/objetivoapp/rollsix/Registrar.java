@@ -52,8 +52,8 @@ public class Registrar extends AppCompatActivity {
         }
 
         // Verificar que las contraseñas tengan al menos 5 caracteres
-        if (password.length() < 5 || repeatPassword.length() < 5) {
-            mostrarMensaje("Las contraseñas deben tener al menos 5 caracteres");
+        if (password.length() < 6|| repeatPassword.length() < 6) {
+            mostrarMensaje("Las contraseñas deben tener al menos 6 caracteres");
             return;
         }
 
