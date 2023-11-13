@@ -20,24 +20,30 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:label="@string/title_activity_instrucciones"
-            android:theme="@style/Theme.RollSix.Fullscreen" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.RollSix.Fullscreen"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".Historial"
             android:exported="false"
             android:label="@string/title_activity_historial"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.RollSix" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false"
-            android:label="@string/title_activity_login" />
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".LogicaJuego"
             android:exported="false"
             android:label="LogicaJuego"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.RollSix" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
