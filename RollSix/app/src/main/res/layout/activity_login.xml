@@ -83,7 +83,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp"
         android:backgroundTint="#5F2EB6"
-        android:enabled="false"
+        android:enabled="true"
         android:text="Registrate"
         android:textColor="#020101"
         android:textStyle="bold"

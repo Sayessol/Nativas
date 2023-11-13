@@ -54,6 +54,18 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
 
+// Obtén una referencia al botón de registro
+        Button registroButton = binding.registro;
+
+        // Establece un OnClickListener para el botón de registro
+        registroButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Inicia la actividad Registro.class
+                Intent intent = new Intent(LoginActivity.this, Registrar.class);
+                startActivity(intent);
+            }
+        });
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
             public void onChanged(@Nullable LoginFormState loginFormState) {
