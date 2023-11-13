@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2B872E"
+    android:background="@drawable/tapete"
     android:paddingLeft="16dp"
     android:paddingTop="16dp"
     android:paddingRight="16dp"
@@ -18,13 +18,18 @@
         android:id="@+id/resultadoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="65dp"
         android:layout_below="@id/emailTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="135dp"
         android:gravity="center"
         android:text="@string/resultado_aqui"
-        android:textColor="#710DBC"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:textSize="20dp"
         android:textStyle="bold" />
+
     <TextView
         android:id="@+id/emailTextView"
         android:layout_width="wrap_content"
@@ -32,25 +37,33 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:padding="8dp"
-        android:text="Email del jugador" />
+        android:text="Email del jugador"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
 
     <!-- Saldo del jugador en la esquina superior derecha -->
     <TextView
         android:id="@+id/saldoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:padding="8dp"
-        android:text="Saldo" />
+        android:text="Saldo"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
 
     <Button
         android:id="@+id/jugarButton"
         android:layout_width="290dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/resultadoTextView"
+        android:layout_below="@+id/editTextNumber2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="67dp"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="578dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="70dp"
         android:backgroundTint="#673AB7"
         android:insetLeft="0dp"
         android:padding="20dp"
@@ -83,26 +96,28 @@
         android:id="@+id/editTextNumber2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="128dp"
+        android:layout_marginTop="542dp"
         android:ems="10"
-        android:textStyle="bold"
         android:hint="INSERTA TU APUESTA"
-        android:inputType="number" />
+        android:inputType="number"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/myIMG"
         android:layout_width="300dp"
         android:layout_height="200dp"
+        android:layout_below="@id/resultadoTextView"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/resultadoTextView"
         android:layout_marginTop="195dp"
         android:layout_marginEnd="35dp"
         android:layout_marginRight="30dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/dice" />
+        android:src="@drawable/transpdices" />
 
 </RelativeLayout>
