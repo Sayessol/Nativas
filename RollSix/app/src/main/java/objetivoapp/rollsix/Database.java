@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
@@ -47,6 +49,8 @@ public class Database extends SQLiteOpenHelper {
                 + COLUMN_PARTIDA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_JUGADOR_ID + " INTEGER,"
                 + COLUMN_GANANCIAS + " INTEGER,"
+                + "FechadePartida TEXT,"
+                + "UbicacionJugador TEXT,"
                 + "FOREIGN KEY (" + COLUMN_JUGADOR_ID + ") REFERENCES " + TABLE_PLAYER + "(" + COLUMN_ID + ")"
                 + ")";
         db.execSQL(CREATE_PARTIDA_TABLE);
@@ -56,17 +60,19 @@ public class Database extends SQLiteOpenHelper {
     // Necesitarán modificaciones para adaptarse al nuevo esquema de la base de datos.
     // Por ejemplo, al insertar una partida, deberás insertar en la tabla "partida" con el ID del jugador correspondiente.
 
-    // Insertar una nueva partida en la tabla "partida"
-    public void insertPartida(int idJugador, int ganancias) {
+    public void insertPartida(int idJugador, int ganancias, String fechaPartida, String ubicacion) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_JUGADOR_ID, idJugador);
         values.put(COLUMN_GANANCIAS, ganancias);
+        values.put("FechadePartida", fechaPartida); // Nueva columna FechadePartida
+        values.put("UbicacionJugador", ubicacion); // Nueva columna UbicacionJugador
 
         long resultado = db.insert(TABLE_PARTIDA, null, values);
         db.close();
     }
+
 
 
     @Override
@@ -154,18 +160,21 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_PLAYER, values, COLUMN_ID + " = ?", new String[]{String.valueOf(player.getId())});
     }
 
-    public void updateHistorial(String idJugador, String ganancias) {
+    public void updateHistorial(String idJugador, String ganancias, String fechaPartida, String ubicacion) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_JUGADOR_ID, idJugador);
         values.put(COLUMN_GANANCIAS, ganancias);
+        values.put("FechadePartida", fechaPartida); // Reemplaza "FechadePartida" por el nombre de tu columna
+        values.put("UbicacionJugador", ubicacion); // Reemplaza "UbicacionJugador" por el nombre de tu columna
 
         long resultado = db.insert(TABLE_PARTIDA, null, values);
         db.close();
     }
 
 
-    //RXJAVA
+
+    // Actualizar la función de obtener partidas por ID del jugador para incluir FechadePartida y UbicacionJugador
     public Observable<Object> obtenerPartidasPorIdJugadorRx(String idJugador) {
         return Observable.create(emitter -> {
             ArrayList<String> partidasJugador = new ArrayList<>();
@@ -174,7 +183,9 @@ public class Database extends SQLiteOpenHelper {
             String[] projection = {
                     COLUMN_PARTIDA_ID,
                     COLUMN_JUGADOR_ID,
-                    COLUMN_GANANCIAS
+                    COLUMN_GANANCIAS,
+                    "FechadePartida", // Nueva columna FechadePartida
+                    "UbicacionJugador" // Nueva columna UbicacionJugador
             };
 
             String selection = COLUMN_JUGADOR_ID + " = ?";
@@ -194,8 +205,11 @@ public class Database extends SQLiteOpenHelper {
                 String partidaId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID)));
                 String jugadorId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID)));
                 String ganancias = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS)));
+                String fechaPartida = cursor.getString(cursor.getColumnIndexOrThrow("FechadePartida"));
+                String ubicacion = cursor.getString(cursor.getColumnIndexOrThrow("UbicacionJugador"));
 
-                partidasJugador.add("En la partida ID :" + partidaId + ", el JugadorID " + jugadorId + " ha ganado " + ganancias);
+                partidasJugador.add("En la partida ID: " + partidaId + ", el Jugador ID " + jugadorId +
+                        " ha ganado " + ganancias + " en la fecha " + fechaPartida + " en " + ubicacion);
             }
 
             cursor.close();
@@ -210,7 +224,7 @@ public class Database extends SQLiteOpenHelper {
     //Carga de datos
 
     // Función para cargar datos de jugadores y partidas
-    public void cargarDatos() {
+    /*public void cargarDatos() {
         // Insertar jugadores
         insertJugador(new Player("1", "jugador1@email.com", "password1", 1000)); // Reemplaza con los valores deseados
         insertJugador(new Player("2", "jugador2@email.com", "password2", 1500)); // Reemplaza con los valores deseados
@@ -220,7 +234,7 @@ public class Database extends SQLiteOpenHelper {
         insertPartida(1, 700); // Estas son partidas del jugador 1
         insertPartida(2, 800); // Aquí asumo que el jugador 2 tiene la ID 2
         insertPartida(2, 1200); // Estas son partidas del jugador 2
-    }
+    }*/
 
 
    // Obtener los datos de un jugador por su ID
@@ -299,4 +313,35 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return jugador;
     }
+
+
+    //PRODUCTO 2
+
+    public List<String> obtenerPartidasConVictoriasPorFechaYUbicacion(String emailJugador, String fecha) {
+        List<String> partidasConVictoriasYUbicacion = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT FechadePartida, UbicacionJugador FROM " + TABLE_PARTIDA +
+                " WHERE " + COLUMN_JUGADOR_ID + " = (SELECT " + COLUMN_ID + " FROM " + TABLE_PLAYER + " WHERE " + COLUMN_EMAIL + " = ?)" +
+                " AND FechadePartida = ? AND " + COLUMN_GANANCIAS + " > 0";
+        String[] selectionArgs = { emailJugador, fecha };
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        while (cursor.moveToNext()) {
+            String fechaPartida = cursor.getString(cursor.getColumnIndexOrThrow("FechadePartida"));
+            String ubicacionJugador = cursor.getString(cursor.getColumnIndexOrThrow("UbicacionJugador"));
+
+            String partidaInfo = "Fecha: " + fechaPartida + ", Ubicación: " + ubicacionJugador;
+            partidasConVictoriasYUbicacion.add(partidaInfo);
+        }
+
+        cursor.close();
+        return partidasConVictoriasYUbicacion;
+    }
+
+
+
+
+
 }

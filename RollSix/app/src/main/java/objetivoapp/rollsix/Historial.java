@@ -24,21 +24,12 @@ public class Historial extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial); // Así asumimos que el XML se llama "layout_principal"
 
-        // Aquí se hace la referencia a tu botón y se agrega el Listener para cerrar la aplicación
-        Button botonCerrar = findViewById(R.id.botonCerrar);
-        botonCerrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Cierra la aplicación al presionar el botón "Cerrar Aplicación"
-                finish();
-            }
-        });
-
-
         // Recibir los datos del jugador pasados desde la actividad anterior
         Intent intent = getIntent();
         String emailUsuario = intent.getStringExtra("EMAIL_USUARIO");
         String saldo = intent.getStringExtra("SALDO");
+
+
 
         // Mostrar los datos en los TextView correspondientes en la actividad Historial
         TextView emailTextView = findViewById(R.id.emailTextView);
@@ -46,6 +37,19 @@ public class Historial extends Activity {
 
         TextView saldoTextView = findViewById(R.id.saldoTextView);
         saldoTextView.setText(saldo);
+
+        // Aquí se hace la referencia a tu botón y se agrega el Listener para cerrar la aplicación
+        Button botonCerrar = findViewById(R.id.botonCerrar);
+        botonCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Historial.this, Calendario.class);
+                intent.putExtra("EMAIL_USUARIO", emailUsuario);
+                intent.putExtra("SALDO", saldo);
+                startActivity(intent);
+            }
+        });
+
         // Referencia al ListView
         ListView historialListView = findViewById(R.id.historialListView);
 

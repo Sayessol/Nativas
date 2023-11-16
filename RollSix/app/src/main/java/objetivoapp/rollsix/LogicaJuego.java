@@ -1,6 +1,10 @@
 package objetivoapp.rollsix;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -10,8 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Random;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
 
 public class LogicaJuego extends AppCompatActivity {
 
@@ -71,6 +83,21 @@ public class LogicaJuego extends AppCompatActivity {
             apuestaIgual = false;
         });
 
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String fechaActual = dateFormat.format(calendar.getTime());
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Aquí deberías solicitar los permisos para obtener la ubicación si no están concedidos
+            // Y luego manejar la respuesta en onRequestPermissionsResult
+            return;
+        }
+
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        String ubicacionActual = location.getLatitude() + ", " + location.getLongitude();
+
         // configurmos el OnClickListener para el botón con expresión lambda porque me daba alerta
         jugarButton.setOnClickListener(v -> {
             // Obtener la cantidad apostada del EditText
@@ -120,7 +147,8 @@ public class LogicaJuego extends AppCompatActivity {
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida"
-                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
+                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
+
             }
 
             // Actualizar la base de datos y el saldoTextView si el jugador perdió
@@ -132,7 +160,7 @@ public class LogicaJuego extends AppCompatActivity {
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida" con ganancias negativas
-                database.updateHistorial(jugador.getId(), "-" + cantidadApostada);
+                database.updateHistorial(jugador.getId(), "-" + cantidadApostada,fechaActual,ubicacionActual);
             }
 
             // mostrar resultado en TextView
