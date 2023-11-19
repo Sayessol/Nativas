@@ -1,23 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RollSix</string>
-    <string name="title_activity_login">Accede o crea tu cuenta aqui </string>
+    <string name="title_activity_login">Access or create your account</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Contraseña</string>
-    <string name="action_sign_in">Iniciar sesion</string>
-    <string name="action_sign_in_short">Registrate</string>
-    <string name="welcome">"Bienvenido!"</string>
-    <string name="invalid_username">Usuario no valido</string>
-    <string name="invalid_password">La contraseña debe ser >5 caracteres</string>
-    <string name="login_failed">"Error de inicio de sesion"</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Sign up</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
     <string name="title_activity_historial">Historial</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Siguiente</string>
-    <string name="previous">Anterior</string>
-    <string name="resultado_partida">El resultado ha sido %1$d siendo el primer dado un %2$d y el segundo %3$d</string>
-    <string name="resultado_aqui">Resultado</string>
-    <string name="jugar">Jugar</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="resultado_partida">The result was %1$d the first given being %2$d and the second being  %3$d</string>
+    <string name="resultado_aqui">Result here</string>
+    <string name="jugar">Play</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -55,28 +56,27 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
-    <string name="title_activity_instrucciones">Instrucciones</string>
+    <string name="title_activity_instrucciones">Instructions</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="fullscreen_content">Juego de dados con dos dados</string>
-    <string name="textView"> - Apuesta basada en si el resultado es mayor o menor a 6</string>
-    <string name="textView2"> - Haz la apuesta e ingresa la cantidad en el recuadro</string>
-    <string name="textView3"> - Selecciona la opción de apuesta que quieres:</string>
-    <string name="textView4">                   - MAYOR O MENOR QUE 6:</string>
-    <string name="textView5"> - Lanza los dados y espera el resultado</string>
-    <string name="textView8"> - Si tu apuesta fue mayor y el resultado es mayor: HAS GANADO! Pero si el resultado es menor... perdiste.</string>
-    <string name="nextButton"> - Si tu apuesta es menor y el resultado es menor: HAS GANADO! Pero si el resultado es mayor... perdiste.</string>
-    <string name="mayorBtn">Mayor a 6</string>
-    <string name="menorBtn">Menor a 6</string>
-    <string name="Insertar">INSERTA TU APUESTA</string>
-    <string name="editTextNumber2">APOSTAR</string>
-    <string name="Historial">Historial</string>
-    <string name="Repetir">Volver a jugar</string>
-    <string name="regisPage">REGISTRATE</string>
-    <string name="regisPagemail">Correo Electrónico</string>
-    <string name="regisPagecontra">Contraseña</string>
-    <string name="regisPageRepcontra">Repetir Contraseña</string>
-    <string name="Confirmar">Confirmar</string>
-
+    <string name="fullscreen_content">Dice game with two dice</string>
+    <string name="textView"> - Bet based on whether the result is greater or less than 6</string>
+    <string name="textView2"> - Place the bet and enter the amount on the line</string>
+    <string name="textView3"> - Select the bet option you want:</string>
+    <string name="textView4">                   - GREATER OR LESS THAN 6:</string>
+    <string name="textView5"> - Roll the dice and wait for the result</string>
+    <string name="textView8"> - If your bet was higher and the result is higher: YOU HAVE WON! But if the result is less... you lost.</string>
+    <string name="nextButton"> - If your bet is lower and the result is lower: YOU HAVE WON! But if the result is higher... you lost.</string>
+    <string name="mayorBtn">Greater than 6</string>
+    <string name="menorBtn">Less than 6</string>
+    <string name="Insertar">INSERT YOUR BET</string>
+    <string name="editTextNumber2">PLACE YOUR BET</string>
+    <string name="Historial">Record</string>
+    <string name="Repetir">Play again</string>
+    <string name="regisPage">SIGN UP</string>
+    <string name="regisPagemail">Email</string>
+    <string name="regisPagecontra">Password</string>
+    <string name="regisPageRepcontra">Repeat password</string>
+    <string name="Confirmar">Confirm</string>
 
 </resources>
