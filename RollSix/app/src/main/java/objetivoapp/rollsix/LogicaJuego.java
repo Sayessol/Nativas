@@ -8,6 +8,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import pub.devrel.easypermissions.EasyPermissions;
+import android.Manifest;
+import android.content.ContentValues;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.widget.ImageView;
+import androidx.core.content.ContextCompat;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.Flushable;
+import java.io.IOException;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +36,8 @@ public class LogicaJuego extends AppCompatActivity {
     private boolean apuestaMayor = true;  // Cambia a false si apuestas menor
     private boolean apuestaMenor = false; // Cambia a true si apuestas menor
     private boolean apuestaIgual = false; // Cambia a true si apuestas igual
+
+    private static final int REQUEST_CODE_CAPTURE_SCREENSHOT = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +140,9 @@ public class LogicaJuego extends AppCompatActivity {
 
                 // Añadir nueva partida a la tabla "partida"
                 database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
+
+                //capturar y guardar la pantalla
+                captureAndSaveScreenshot();
             }
 
             // Actualizar la base de datos y el saldoTextView si el jugador perdió
@@ -163,5 +185,93 @@ public class LogicaJuego extends AppCompatActivity {
         } else {
             return "Perdiste. Intenta de nuevo.";
         }
+    }
+
+    //método para capturar y guardar la pantalla
+    private void captureAndSaveScreenshot() {
+        // Verificar los permisos de escritura externa
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Obtener la vista de la pantalla actual
+            getWindow().getDecorView().setDrawingCacheEnabled(true);
+            Bitmap bitmap = getWindow().getDecorView().getDrawingCache();
+
+            // Guardar la captura de pantalla en la galería
+            saveScreenshot(bitmap);
+
+            // Limpiar la memoria caché de la vista
+            getWindow().getDecorView().setDrawingCacheEnabled(false);
+        } else {
+            // Solicitar permisos si no están concedidos
+            EasyPermissions.requestPermissions(this,
+                    "Se requieren permisos para guardar la captura de pantalla en la galería.",
+                    REQUEST_CODE_CAPTURE_SCREENSHOT, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
+    // Método para guardar la captura de pantalla en la galería
+    private void saveScreenshot(Bitmap bitmap) {
+        // Crear un directorio para almacenar las capturas de pantalla
+        String directoryPath = Environment.DIRECTORY_PICTURES + File.separator + "RollSixScreenshots";
+        File directoriorollsix = new File(Environment.getExternalStoragePublicDirectory(directoryPath), "");
+        if (!directoriorollsix.exists()) {
+            directoriorollsix.mkdirs();
+        }
+
+        // Guardar la captura de pantalla en un archivo
+        File file = new File(directoriorollsix, "screenshot_" + System.currentTimeMillis() + ".png");
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+
+            // Actualizar la galería con la nueva captura de pantalla
+            updateGallery(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método para actualizar la galería con la nueva captura de pantalla
+    private void updateGallery(File file) {
+        // Escanear el archivo para que aparezca en la galería
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContentValues contentValues = new ContentValues();
+
+            // Inicializar un array de bytes (ajusta esto según tus necesidades)
+            byte[] directoriorollsix = "directoriorollsix".getBytes(); // Reemplaza "tu_directorio" con el valor correcto
+
+            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, new String(directoriorollsix));
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 1);
+
+            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+
+            try {
+                if (uri != null) {
+                    getContentResolver().openOutputStream(uri).flush();
+
+                    contentValues.clear();
+                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0);
+                    getContentResolver().update(uri, contentValues, null, null);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            MediaScannerConnection.scanFile(this,
+                    new String[]{file.getAbsolutePath()},
+                    new String[]{"image/png"},
+                    (path, uri) -> {
+                        // Acciones adicionales después de escanear el archivo
+                    });
+        }
+    }
+
+    // ...
+
+    // Método para manejar el resultado de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 }
