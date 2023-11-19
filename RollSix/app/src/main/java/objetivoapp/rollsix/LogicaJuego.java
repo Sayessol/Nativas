@@ -8,6 +8,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
+import android.os.Environment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import android.widget.Button;
+import android.widget.PopupWindow;
+import android.view.Gravity;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +36,8 @@ public class LogicaJuego extends AppCompatActivity {
     private boolean apuestaMayor = true;  // Cambia a false si apuestas menor
     private boolean apuestaMenor = false; // Cambia a true si apuestas menor
     private boolean apuestaIgual = false; // Cambia a true si apuestas igual
+
+    private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +140,9 @@ public class LogicaJuego extends AppCompatActivity {
 
                 // Añadir nueva partida a la tabla "partida"
                 database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
+
+                // Mostrar ventana emergente si el jugador ganó
+                mostrarVentanaEmergente();
             }
 
             // Actualizar la base de datos y el saldoTextView si el jugador perdió
@@ -164,4 +186,75 @@ public class LogicaJuego extends AppCompatActivity {
             return "Perdiste. Intenta de nuevo.";
         }
     }
+    private void mostrarVentanaEmergente() {
+        // Inflar el diseño de la ventana emergente
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window_layout, null);
+
+        // Configurar los botones en la ventana emergente
+        Button capturaBtn = popupView.findViewById(R.id.capturaBtn);
+        Button cerrarBtn = popupView.findViewById(R.id.cerrarBtn);
+
+        // Configurar el OnClickListener para el botón de captura
+        capturaBtn.setOnClickListener(v -> {
+            // Captura de pantalla y guardar en la carpeta "screenshots"
+            captureScreen();
+            popupWindow.dismiss(); // Cerrar la ventana emergente después de capturar
+        });
+
+        // Configurar el OnClickListener para el botón de cerrar
+        cerrarBtn.setOnClickListener(v -> popupWindow.dismiss());
+
+        // Crear y mostrar la ventana emergente
+        popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+    }
+
+    private void captureScreen() {
+        View rootView = getWindow().getDecorView().getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+        rootView.setDrawingCacheEnabled(false);
+
+        // Guardar la captura de pantalla en la carpeta "Pictures/Screenshots"
+        String filename = "screenshot_" + System.currentTimeMillis() + ".png";
+        String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Screenshots/";
+        String filePath = directoryPath + filename;
+
+        try {
+            // Crear directorio si no existe
+            File directory = new File(directoryPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Crear el archivo
+            File file = new File(filePath);
+
+            // Crear el flujo de salida para el archivo
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            // Comprimir y guardar la captura de pantalla en el archivo
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            // Escanear el archivo para que aparezca en la galería
+            MediaScannerConnection.scanFile(this, new String[]{file.getPath()}, null, null);
+
+            Toast.makeText(this, "Captura de pantalla guardada en la carpeta 'Pictures/Screenshots'", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al guardar la captura de pantalla", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
 }
