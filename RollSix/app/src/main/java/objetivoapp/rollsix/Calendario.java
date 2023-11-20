@@ -104,6 +104,8 @@ btnVolver.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Calendario.this, LogicaJuego.class);
+            intent.putExtra("EMAIL_USUARIO", emailUsuario);
+            intent.putExtra("SALDO", String.valueOf(saldo));
             startActivity(intent);
         }
     });
