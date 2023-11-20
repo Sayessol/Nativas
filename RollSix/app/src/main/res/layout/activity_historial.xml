@@ -28,10 +28,10 @@
         android:id="@+id/tituloTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/emailTextView"
+        android:layout_centerHorizontal="true"
         android:padding="16dp"
-        android:text="Historial"
+        android:text="@string/Historial"
         android:textSize="24sp" />
 
     <!-- Listbox para mostrar los datos del historial -->
@@ -49,6 +49,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Ir al Calendario" />
+        android:text="@string/Repetir" />
 
 </RelativeLayout>

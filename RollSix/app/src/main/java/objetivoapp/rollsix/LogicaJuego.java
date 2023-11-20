@@ -1,10 +1,6 @@
 package objetivoapp.rollsix;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -12,18 +8,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
+import android.os.Environment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import android.widget.Button;
+import android.widget.PopupWindow;
+import android.view.Gravity;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.Random;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
-import androidx.core.app.ActivityCompat;
 
 public class LogicaJuego extends AppCompatActivity {
 
@@ -31,6 +36,8 @@ public class LogicaJuego extends AppCompatActivity {
     private boolean apuestaMayor = true;  // Cambia a false si apuestas menor
     private boolean apuestaMenor = false; // Cambia a true si apuestas menor
     private boolean apuestaIgual = false; // Cambia a true si apuestas igual
+
+    private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,21 +90,6 @@ public class LogicaJuego extends AppCompatActivity {
             apuestaIgual = false;
         });
 
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String fechaActual = dateFormat.format(calendar.getTime());
-
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Aquí deberías solicitar los permisos para obtener la ubicación si no están concedidos
-            // Y luego manejar la respuesta en onRequestPermissionsResult
-            return;
-        }
-
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        String ubicacionActual = location.getLatitude() + ", " + location.getLongitude();
-
         // configurmos el OnClickListener para el botón con expresión lambda porque me daba alerta
         jugarButton.setOnClickListener(v -> {
             // Obtener la cantidad apostada del EditText
@@ -147,8 +139,10 @@ public class LogicaJuego extends AppCompatActivity {
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida"
-                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
+                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
 
+                // Mostrar ventana emergente si el jugador ganó
+                mostrarVentanaEmergente();
             }
 
             // Actualizar la base de datos y el saldoTextView si el jugador perdió
@@ -160,7 +154,7 @@ public class LogicaJuego extends AppCompatActivity {
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida" con ganancias negativas
-                database.updateHistorial(jugador.getId(), "-" + cantidadApostada,fechaActual,ubicacionActual);
+                database.updateHistorial(jugador.getId(), "-" + cantidadApostada);
             }
 
             // mostrar resultado en TextView
@@ -192,4 +186,75 @@ public class LogicaJuego extends AppCompatActivity {
             return "Perdiste. Intenta de nuevo.";
         }
     }
+    private void mostrarVentanaEmergente() {
+        // Inflar el diseño de la ventana emergente
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window_layout, null);
+
+        // Configurar los botones en la ventana emergente
+        Button capturaBtn = popupView.findViewById(R.id.capturaBtn);
+        Button cerrarBtn = popupView.findViewById(R.id.cerrarBtn);
+
+        // Configurar el OnClickListener para el botón de captura
+        capturaBtn.setOnClickListener(v -> {
+            // Captura de pantalla y guardar en la carpeta "screenshots"
+            captureScreen();
+            popupWindow.dismiss(); // Cerrar la ventana emergente después de capturar
+        });
+
+        // Configurar el OnClickListener para el botón de cerrar
+        cerrarBtn.setOnClickListener(v -> popupWindow.dismiss());
+
+        // Crear y mostrar la ventana emergente
+        popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+    }
+
+    private void captureScreen() {
+        View rootView = getWindow().getDecorView().getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+        rootView.setDrawingCacheEnabled(false);
+
+        // Guardar la captura de pantalla en la carpeta "Pictures/Screenshots"
+        String filename = "screenshot_" + System.currentTimeMillis() + ".png";
+        String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Screenshots/";
+        String filePath = directoryPath + filename;
+
+        try {
+            // Crear directorio si no existe
+            File directory = new File(directoryPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Crear el archivo
+            File file = new File(filePath);
+
+            // Crear el flujo de salida para el archivo
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            // Comprimir y guardar la captura de pantalla en el archivo
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            // Escanear el archivo para que aparezca en la galería
+            MediaScannerConnection.scanFile(this, new String[]{file.getPath()}, null, null);
+
+            Toast.makeText(this, "Captura de pantalla guardada en la carpeta 'Pictures/Screenshots'", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al guardar la captura de pantalla", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
 }
