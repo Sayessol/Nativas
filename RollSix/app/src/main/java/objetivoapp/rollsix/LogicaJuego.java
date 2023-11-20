@@ -1,6 +1,9 @@
 package objetivoapp.rollsix;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -27,6 +30,7 @@ import java.io.IOException;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import java.util.Random;
 
@@ -58,7 +62,7 @@ public class LogicaJuego extends AppCompatActivity {
         TextView saldoTextView = findViewById(R.id.saldoTextView);
         int s = jugador.getSaldo();
         saldoTextView.setText(String.valueOf(s));
-
+        
         // obtener referencia al TextView en tu layout
         TextView resultadoTextView = findViewById(R.id.resultadoTextView);
 
@@ -142,6 +146,7 @@ public class LogicaJuego extends AppCompatActivity {
                 database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
 
                 // Mostrar ventana emergente si el jugador ganó
+                createNotification();
                 mostrarVentanaEmergente();
             }
 
@@ -255,6 +260,30 @@ public class LogicaJuego extends AppCompatActivity {
     }
 
 
+    private void createNotification(){
+        String NOTIFICATION_ID = "message";
+        NotificationManager notificationManager=(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder=new NotificationCompat.Builder(this,NOTIFICATION_ID);
+        NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_ID, "Nuevos", NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.setDescription("Notificaciones de victoria");
+        notificationChannel.enableLights(true);
+        notificationChannel.setLightColor(Color.GREEN);
+        notificationChannel.setShowBadge(true);
+        notificationManager.createNotificationChannel(notificationChannel);
+
+
+        builder.setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(android.R.drawable.ic_input_add)
+                .setTicker("Notificacion")
+                .setContentTitle("Victoria!")
+                .setContentText("Has ganado la partida, enhorabuena!")
+                .setContentInfo("Notificacion de victoria");
+
+        notificationManager.notify(1,builder.build());
+
+
+    }
 
 
 }
