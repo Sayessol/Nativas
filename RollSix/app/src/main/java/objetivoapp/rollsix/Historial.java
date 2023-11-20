@@ -62,9 +62,6 @@ public class Historial extends Activity {
         if (jugador != null) {
             // Obtener el id del jugador
             String idJugador = jugador.getId();
-            // Mostrar el valor de idJugador en un Toast
-
-            Toast.makeText(getApplicationContext(), "El ID del jugador es: ", Toast.LENGTH_LONG).show();
             // En tu método dentro del Activity
             // Obtener las partidas del jugador utilizando la función sin RxJava
             ArrayList<String> partidasJugador = database.obtenerPartidasPorIdJugador(idJugador);

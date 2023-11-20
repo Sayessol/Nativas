@@ -296,6 +296,19 @@ public class LogicaJuego extends AppCompatActivity {
             MediaScannerConnection.scanFile(this, new String[]{file.getPath()}, null, null);
 
             Toast.makeText(this, "Captura de pantalla guardada en la carpeta 'Pictures/Screenshots'", Toast.LENGTH_SHORT).show();
+
+            Database database = new Database(this);
+            // Obtener el último ID de partida
+            int ultimoIdPartida = database.obtenerUltimoIdPartida();
+
+            // Insertar la ruta en la tabla Ruta
+            if (ultimoIdPartida != -1) {
+                database.insertarRuta(filePath, ultimoIdPartida);
+                Toast.makeText(this, "Ruta de imagen guardada para la última partida registrada", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No se pudo obtener el último ID de partida", Toast.LENGTH_SHORT).show();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error al guardar la captura de pantalla", Toast.LENGTH_SHORT).show();

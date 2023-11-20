@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -28,7 +30,6 @@ public class Calendario extends AppCompatActivity {
         String saldo = intent.getStringExtra("SALDO");
 
 
-
         // Mostrar los datos en los TextView correspondientes en la actividad Historial
         TextView emailTextView = findViewById(R.id.emailTextView);
         emailTextView.setText(emailUsuario);
@@ -44,71 +45,58 @@ public class Calendario extends AppCompatActivity {
         String ubicacion = "Tu ubicación";
         String fecha = "Tu fecha";
 
-    // Configurar el calendario para mostrar las fechas con partidas ganadas
-    CalendarView calendarView = findViewById(R.id.calendarView);
+        CalendarView calendarView = findViewById(R.id.calendarView);
 
-    calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-        @Override
-        public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-            String fechaSeleccionada = year + "-" + (month + 1) + "-" + dayOfMonth; // Formato de fecha a consultar
-            List<String> fechasConVictorias = db.obtenerPartidasConVictoriasPorFechaYUbicacion(emailUsuario,fechaSeleccionada);
-            // Verificar si la fecha seleccionada tiene una partida con victoria asociada
-            if (fechasConVictorias.contains(fechaSeleccionada)) {
-                // Verificar si la fecha seleccionada tiene una partida con victoria asociada
-                if (!fechasConVictorias.isEmpty()) {
-                    // Obtener la primera partida (asumiendo que solo hay una para esa fecha)
-                    String partida = fechasConVictorias.get(0);
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                String fechaSeleccionada = year + "-" + (month + 1) + "-" + dayOfMonth; // Formato de fecha a consultar
 
-                    // Separar la ubicación y la fecha de la partida
-                    String[] infoPartida = partida.split(","); // Ajusta esto según el formato de tu información
+                // Obtener el ID de la partida para buscar la ruta de la imagen asociada
+                int idPartida = db.obtenerUltimoIdPartidaconRuta();
+                Toast.makeText(Calendario.this, idPartida, Toast.LENGTH_SHORT).show();
+/*
+// Verificar si la partida tiene una ruta asociada
+                String rutaImagen = db.obtenerRutaImagenPorIdPartida(idPartida);
 
-                    if (infoPartida.length >= 2) { // Verificar si hay al menos ubicación y fecha
-                        String ubicacion = infoPartida[0].trim(); // Ubicación
-                        String fecha = infoPartida[1].trim(); // Fecha
+                       if (rutaImagen != null && !rutaImagen.isEmpty()) {
+                            try {
+                                // Cargar la imagen y mostrarla en el ImageView
+                                Bitmap imagenPartida = BitmapFactory.decodeFile(rutaImagen);
 
-                        // Mostrar los TextView y establecer la información
-                        ubicacionTextView.setVisibility(View.VISIBLE);
-                        fechaTextView.setVisibility(View.VISIBLE);
-
-                        ubicacionTextView.setText("Ubicación: " + ubicacion);
-                        fechaTextView.setText("Fecha: " + fecha);
-                    }
-                } else {
-                    // Si no hay partidas con victorias para esa fecha, ocultar los TextView
-                    ubicacionTextView.setVisibility(View.GONE);
-                    fechaTextView.setVisibility(View.GONE);
-                }
-
-
-                // Si hay una victoria en esta fecha, muestra la imagen correspondiente en el ImageView
-                // Utiliza la lógica para cargar y mostrar la imagen en el ImageView
-                // Aquí se asume que tienes una función para obtener la imagen de la partida por fecha
-              /*  Bitmap imagenPartida = db.obtenerImagenPartidaPorFecha(emailJugador, fechaSeleccionada);
-
-                // Luego de obtener la imagen, muestrala en el ImageView
-                ImageView imageViewPartida = findViewById(R.id.imageViewPartida);
-                imageViewPartida.setImageBitmap(imagenPartida);
-                imageViewPartida.setVisibility(View.VISIBLE); // Hacer visible el ImageView*/
-            } else {
-                // Si no hay victoria en esta fecha, oculta el ImageView
-                ImageView imageViewPartida = findViewById(R.id.imageViewPartida);
-                imageViewPartida.setVisibility(View.GONE);
+                                ImageView imageViewPartida = findViewById(R.id.imageViewPartida);
+                                imageViewPartida.setImageBitmap(imagenPartida);
+                                imageViewPartida.setVisibility(View.VISIBLE); // Hacer visible el ImageView
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                // Manejar la excepción (por ejemplo, mostrar un mensaje de error)
+                                Toast.makeText(Calendario.this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // Si no hay una ruta de imagen asociada, ocultar el ImageView
+                            ImageView imageViewPartida = findViewById(R.id.imageViewPartida);
+                            imageViewPartida.setVisibility(View.GONE);
+                        }*/
             }
-        }
-    });
 
 
-    // En el método onCreate de tu actividad CalendarioActivity
-    Button btnVolver = findViewById(R.id.btnVolver);
-btnVolver.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(Calendario.this, LogicaJuego.class);
-            intent.putExtra("EMAIL_USUARIO", emailUsuario);
-            intent.putExtra("SALDO", String.valueOf(saldo));
-            startActivity(intent);
-        }
-    });
+        });
+
+
+        // En el método onCreate de tu actividad CalendarioActivity
+        Button btnVolver = findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Calendario.this, LogicaJuego.class);
+                intent.putExtra("EMAIL_USUARIO", emailUsuario);
+                intent.putExtra("SALDO", String.valueOf(saldo));
+                startActivity(intent);
+
+                // Cierra la actividad actual (Calendario) para reiniciarla al volver a LogicaJuego
+                finish();
+            }
+        });
     }
 }
 

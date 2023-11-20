@@ -29,6 +29,10 @@ public class Database extends SQLiteOpenHelper {
     public static final String COLUMN_JUGADOR_ID = "id_jugador";
     public static final String COLUMN_GANANCIAS = "ganancias";
 
+    public static final String TABLE_RUTA = "ruta";
+    public static final String COLUMN_PARTIDA_IDR = "id_partidaR";
+    public static final String COLUMN_RUTA_ID = "id_ruta";
+
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -54,6 +58,15 @@ public class Database extends SQLiteOpenHelper {
                 + "FOREIGN KEY (" + COLUMN_JUGADOR_ID + ") REFERENCES " + TABLE_PLAYER + "(" + COLUMN_ID + ")"
                 + ")";
         db.execSQL(CREATE_PARTIDA_TABLE);
+        // Crear la tabla "ruta" para asociar rutas de imagen con partidas
+
+        // Crear la tabla "partida" para el historial
+        String CREATE_RUTA_TABLE = "CREATE TABLE " + TABLE_RUTA + "("
+                + COLUMN_PARTIDA_IDR + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_RUTA_ID + " TEXT NOT NULL,"
+                + "FOREIGN KEY (" + COLUMN_PARTIDA_IDR + ") REFERENCES " + TABLE_PARTIDA + "(" + COLUMN_PARTIDA_ID + ")"
+                + ")";
+        db.execSQL(CREATE_RUTA_TABLE);
     }
 
     // Resto de métodos como insertar jugador, verificar jugador existente, obtener datos del jugador, etc.
@@ -71,6 +84,84 @@ public class Database extends SQLiteOpenHelper {
 
         long resultado = db.insert(TABLE_PARTIDA, null, values);
         db.close();
+    }
+
+    public void insertarRuta(String idRuta, int idPartida) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("idRuta", idRuta);
+        values.put("idPartida", idPartida);
+
+        long resultado = db.insert("Ruta", null, values);
+        db.close();
+    }
+
+    public int obtenerUltimoIdPartida() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int ultimoIdPartida = -1;
+
+        String query = "SELECT MAX(" + COLUMN_PARTIDA_ID + ") AS UltimoId FROM " + TABLE_PARTIDA;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex("UltimoId");
+                if (columnIndex != -1) {
+                    ultimoIdPartida = cursor.getInt(columnIndex);
+                }
+            }
+            cursor.close();
+        }
+
+        return ultimoIdPartida;
+    }
+
+    public int obtenerUltimoIdPartidaconRuta() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int ultimoIdPartida = -1;
+
+        String query = "SELECT MAX(p." + COLUMN_PARTIDA_ID + ") AS UltimoIdPartida FROM " + TABLE_PARTIDA + " p " +
+                "INNER JOIN " + TABLE_RUTA + " r ON p." + COLUMN_PARTIDA_ID + " = r." + COLUMN_PARTIDA_IDR +
+                " WHERE r.COLUMN_RUTA_ID  IS NOT NULL";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex("UltimoIdPartida");
+                if (columnIndex != -1) {
+                    ultimoIdPartida = cursor.getInt(columnIndex);
+                }
+            }
+            cursor.close();
+        }
+
+        return ultimoIdPartida;
+    }
+
+
+
+    public String obtenerRutaImagenPorIdPartida(int idPartida) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String rutaImagen = "";
+
+        String query = "SELECT idRuta FROM Ruta WHERE idPartida = ?";
+        String[] selectionArgs = {String.valueOf(idPartida)};
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex("idRuta");
+                if (columnIndex != -1) {
+                    rutaImagen = cursor.getString(columnIndex);
+                }
+            }
+            cursor.close();
+        }
+
+        return rutaImagen;
     }
 
 
