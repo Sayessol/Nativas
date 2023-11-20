@@ -175,6 +175,47 @@ public class Database extends SQLiteOpenHelper {
 
 
     // Actualizar la función de obtener partidas por ID del jugador para incluir FechadePartida y UbicacionJugador
+
+    public ArrayList<String> obtenerPartidasPorIdJugador(String idJugador) {
+        ArrayList<String> partidasJugador = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                COLUMN_PARTIDA_ID,
+                COLUMN_JUGADOR_ID,
+                COLUMN_GANANCIAS,
+                "FechadePartida", // Nueva columna FechadePartida
+                "UbicacionJugador" // Nueva columna UbicacionJugador
+        };
+
+        String selection = COLUMN_JUGADOR_ID + " = ?";
+        String[] selectionArgs = {idJugador};
+
+        Cursor cursor = db.query(
+                TABLE_PARTIDA,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            String partidaId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID)));
+            String jugadorId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID)));
+            String ganancias = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS)));
+            String fechaPartida = cursor.getString(cursor.getColumnIndexOrThrow("FechadePartida"));
+            String ubicacion = cursor.getString(cursor.getColumnIndexOrThrow("UbicacionJugador"));
+
+            partidasJugador.add("En la partida ID: " + partidaId + ", el Jugador ID " + jugadorId +
+                    " ha ganado " + ganancias + " en la fecha " + fechaPartida + " en " + ubicacion);
+        }
+
+        cursor.close();
+        return partidasJugador;
+    }
+
     public Observable<Object> obtenerPartidasPorIdJugadorRx(String idJugador) {
         return Observable.create(emitter -> {
             ArrayList<String> partidasJugador = new ArrayList<>();
