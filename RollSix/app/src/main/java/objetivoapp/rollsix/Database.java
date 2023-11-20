@@ -184,8 +184,8 @@ public class Database extends SQLiteOpenHelper {
                     COLUMN_PARTIDA_ID,
                     COLUMN_JUGADOR_ID,
                     COLUMN_GANANCIAS,
-                    "FechadePartida", // Nueva columna FechadePartida
-                    "UbicacionJugador" // Nueva columna UbicacionJugador
+                    //"FechadePartida", // Nueva columna FechadePartida
+                  //  "UbicacionJugador" // Nueva columna UbicacionJugador
             };
 
             String selection = COLUMN_JUGADOR_ID + " = ?";

@@ -1,6 +1,7 @@
 package objetivoapp.rollsix;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -9,15 +10,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.Manifest;
 
-import android.widget.Button;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+
 import android.widget.PopupWindow;
 import android.view.Gravity;
 import java.io.File;
@@ -28,22 +33,27 @@ import java.io.IOException;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LogicaJuego extends AppCompatActivity {
 
     // Variables para almacenar las apuestas (debes configurarlas según tu lógica de apuestas)
+    private FusedLocationProviderClient fusedLocationClient;
     private boolean apuestaMayor = true;  // Cambia a false si apuestas menor
     private boolean apuestaMenor = false; // Cambia a true si apuestas menor
     private boolean apuestaIgual = false; // Cambia a true si apuestas igual
-
+    private static final int REQUEST_CODE_LOCATION = 1001;
     private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logica_juego);
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Recibir los datos del jugador pasados desde la actividad anterior
         Intent intent = getIntent();
         String idUsuario = intent.getStringExtra("ID_USUARIO");
@@ -93,6 +103,8 @@ public class LogicaJuego extends AppCompatActivity {
         // configurmos el OnClickListener para el botón con expresión lambda porque me daba alerta
         jugarButton.setOnClickListener(v -> {
             // Obtener la cantidad apostada del EditText
+
+
             String cantidadApostadaStr = editTextNumber.getText().toString();
 
             // Verificar si la cantidad apostada es válida
@@ -130,16 +142,26 @@ public class LogicaJuego extends AppCompatActivity {
             // verificar el resultado del juego
             String resultadoFinal = verificarResultado(num1, num2, cantidadApostada);
 
+
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String fechaActual = dateFormat.format(calendar.getTime());
+
+String ubicacionActual=  obtenerUbicacionActual();
+            // Obtener la ubicación actual
+
+
             // actualizar la base de datos y el saldoTextView si el jugador ganó
             if (resultadoFinal.equals("¡Ganaste!")) {
                 jugador.setSaldo(jugador.getSaldo() + cantidadApostada);
                 database.updatePlayer(jugador);
 
+
                 // Actualizar saldoTextView
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida"
-                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
+                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
 
                 // Mostrar ventana emergente si el jugador ganó
                 mostrarVentanaEmergente();
@@ -154,7 +176,7 @@ public class LogicaJuego extends AppCompatActivity {
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida" con ganancias negativas
-                database.updateHistorial(jugador.getId(), "-" + cantidadApostada);
+                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
             }
 
             // mostrar resultado en TextView
@@ -186,6 +208,7 @@ public class LogicaJuego extends AppCompatActivity {
             return "Perdiste. Intenta de nuevo.";
         }
     }
+
     private void mostrarVentanaEmergente() {
         // Inflar el diseño de la ventana emergente
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -254,6 +277,32 @@ public class LogicaJuego extends AppCompatActivity {
         }
     }
 
+    private String obtenerUbicacionActual() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
+            return null;
+        }
+        AtomicReference<String> ubicacionActual= new AtomicReference<>("0,0");
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        double latitud = location.getLatitude();
+                        double longitud = location.getLongitude();
+
+                        ubicacionActual.set(latitud + ", " + longitud);
+
+                        // Utiliza la ubicación obtenida como sea necesario aquí
+                        Toast.makeText(LogicaJuego.this, "Ubicación: " + ubicacionActual, Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    // Manejar cualquier error al obtener la ubicación
+                    Toast.makeText(LogicaJuego.this, "Error al obtener la ubicación: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+        return ubicacionActual.get();
+    }
 
 
 
