@@ -3,13 +3,10 @@ package objetivoapp.rollsix;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.graphics.Color;
-=======
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
->>>>>>> FechaYUbi
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -323,8 +320,7 @@ public class LogicaJuego extends AppCompatActivity {
         }
     }
 
-
-<<<<<<< HEAD
+    
     private void createNotification(){
         String NOTIFICATION_ID = "message";
         NotificationManager notificationManager=(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -350,7 +346,4 @@ public class LogicaJuego extends AppCompatActivity {
 
     }
 
-
-=======
->>>>>>> FechaYUbi
 }
