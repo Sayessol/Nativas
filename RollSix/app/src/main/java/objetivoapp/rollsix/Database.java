@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
@@ -26,6 +28,10 @@ public class Database extends SQLiteOpenHelper {
     public static final String COLUMN_PARTIDA_ID = "id_partida";
     public static final String COLUMN_JUGADOR_ID = "id_jugador";
     public static final String COLUMN_GANANCIAS = "ganancias";
+
+    public static final String TABLE_RUTA = "ruta";
+    public static final String COLUMN_PARTIDA_IDR = "id_partidaR";
+    public static final String COLUMN_RUTA_ID = "id_ruta";
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -47,26 +53,119 @@ public class Database extends SQLiteOpenHelper {
                 + COLUMN_PARTIDA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_JUGADOR_ID + " INTEGER,"
                 + COLUMN_GANANCIAS + " INTEGER,"
+                + "FechadePartida TEXT,"
+                + "UbicacionJugador TEXT,"
                 + "FOREIGN KEY (" + COLUMN_JUGADOR_ID + ") REFERENCES " + TABLE_PLAYER + "(" + COLUMN_ID + ")"
                 + ")";
         db.execSQL(CREATE_PARTIDA_TABLE);
+
+        // Crear la tabla "ruta" para asociar rutas de imagen con partidas
+        String CREATE_RUTA_TABLE = "CREATE TABLE " + TABLE_RUTA + "("
+                + COLUMN_PARTIDA_IDR + " INTEGER,"
+                + COLUMN_RUTA_ID + " TEXT NOT NULL,"
+                + "FOREIGN KEY (" + COLUMN_PARTIDA_IDR + ") REFERENCES " + TABLE_PARTIDA + "(" + COLUMN_PARTIDA_ID + ")"
+                + ")";
+        db.execSQL(CREATE_RUTA_TABLE);
     }
 
     // Resto de métodos como insertar jugador, verificar jugador existente, obtener datos del jugador, etc.
     // Necesitarán modificaciones para adaptarse al nuevo esquema de la base de datos.
     // Por ejemplo, al insertar una partida, deberás insertar en la tabla "partida" con el ID del jugador correspondiente.
 
-    // Insertar una nueva partida en la tabla "partida"
-    public void insertPartida(int idJugador, int ganancias) {
+    public void insertPartida(int idJugador, int ganancias, String fechaPartida, String ubicacion) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_JUGADOR_ID, idJugador);
         values.put(COLUMN_GANANCIAS, ganancias);
+        values.put("FechadePartida", fechaPartida); // Nueva columna FechadePartida
+        values.put("UbicacionJugador", ubicacion); // Nueva columna UbicacionJugador
 
         long resultado = db.insert(TABLE_PARTIDA, null, values);
         db.close();
     }
+
+    public void insertarRuta(String idRuta, int idPartida) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PARTIDA_IDR, idPartida);
+        values.put(COLUMN_RUTA_ID, idRuta);
+
+        long resultado = db.insert(TABLE_RUTA, null, values);
+        db.close();
+    }
+
+    public int obtenerUltimoIdPartida() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int ultimoIdPartida = -1;
+
+        String query = "SELECT MAX(" + COLUMN_PARTIDA_ID + ") AS UltimoId FROM " + TABLE_PARTIDA;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex("UltimoId");
+                if (columnIndex != -1) {
+                    ultimoIdPartida = cursor.getInt(columnIndex);
+                }
+            }
+            cursor.close();
+        }
+
+        return ultimoIdPartida;
+    }
+
+    public int obtenerUltimoIdPartidaconRuta(String fechaSeleccionada) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int ultimoIdPartida = -1;
+
+        String query = "SELECT DISTINCT p." + COLUMN_PARTIDA_ID + " FROM " + TABLE_PARTIDA + " p " +
+                "INNER JOIN " + TABLE_RUTA + " r ON p." + COLUMN_PARTIDA_ID + " = r." + COLUMN_PARTIDA_IDR +
+                " WHERE FechadePartida = ?"; // Agregar la comparación de fechas aquí
+
+        String[] selectionArgs = {fechaSeleccionada}; // Pasar la fecha seleccionada como argumento
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToLast()) {
+                int columnIndex = cursor.getColumnIndex(COLUMN_PARTIDA_ID);
+                if (columnIndex != -1) {
+                    ultimoIdPartida = cursor.getInt(columnIndex);
+                }
+            }
+            cursor.close();
+        }
+
+        return ultimoIdPartida;
+    }
+
+
+
+    public String obtenerRutaImagenPorIdPartida(int idPartida) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String rutaImagen = "";
+
+        String query = "SELECT " + COLUMN_RUTA_ID + " FROM " + TABLE_RUTA + " WHERE " + COLUMN_PARTIDA_IDR + " = ?";
+        String[] selectionArgs = {String.valueOf(idPartida)};
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(COLUMN_RUTA_ID);
+                if (columnIndex != -1) {
+                    rutaImagen = cursor.getString(columnIndex);
+                }
+            }
+            cursor.close();
+        }
+
+        return rutaImagen;
+    }
+
+
 
 
     @Override
@@ -154,18 +253,62 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_PLAYER, values, COLUMN_ID + " = ?", new String[]{String.valueOf(player.getId())});
     }
 
-    public void updateHistorial(String idJugador, String ganancias) {
+    public void updateHistorial(String idJugador, String ganancias, String fechaPartida, String ubicacion) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_JUGADOR_ID, idJugador);
         values.put(COLUMN_GANANCIAS, ganancias);
+        values.put("FechadePartida", fechaPartida); // Reemplaza "FechadePartida" por el nombre de tu columna
+        values.put("UbicacionJugador", ubicacion); // Reemplaza "UbicacionJugador" por el nombre de tu columna
 
         long resultado = db.insert(TABLE_PARTIDA, null, values);
         db.close();
     }
 
 
-    //RXJAVA
+
+    // Actualizar la función de obtener partidas por ID del jugador para incluir FechadePartida y UbicacionJugador
+
+    public ArrayList<String> obtenerPartidasPorIdJugador(String idJugador) {
+        ArrayList<String> partidasJugador = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                COLUMN_PARTIDA_ID,
+                COLUMN_JUGADOR_ID,
+                COLUMN_GANANCIAS,
+                "FechadePartida", // Nueva columna FechadePartida
+                "UbicacionJugador" // Nueva columna UbicacionJugador
+        };
+
+        String selection = COLUMN_JUGADOR_ID + " = ?";
+        String[] selectionArgs = {idJugador};
+
+        Cursor cursor = db.query(
+                TABLE_PARTIDA,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            String partidaId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID)));
+            String jugadorId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID)));
+            String ganancias = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS)));
+            String fechaPartida = cursor.getString(cursor.getColumnIndexOrThrow("FechadePartida"));
+            String ubicacion = cursor.getString(cursor.getColumnIndexOrThrow("UbicacionJugador"));
+
+            partidasJugador.add("En la partida ID: " + partidaId + ", el Jugador ID " + jugadorId +
+                    " ha ganado " + ganancias + " en la fecha " + fechaPartida + " en " + ubicacion);
+        }
+
+        cursor.close();
+        return partidasJugador;
+    }
+
     public Observable<Object> obtenerPartidasPorIdJugadorRx(String idJugador) {
         return Observable.create(emitter -> {
             ArrayList<String> partidasJugador = new ArrayList<>();
@@ -174,7 +317,9 @@ public class Database extends SQLiteOpenHelper {
             String[] projection = {
                     COLUMN_PARTIDA_ID,
                     COLUMN_JUGADOR_ID,
-                    COLUMN_GANANCIAS
+                    COLUMN_GANANCIAS,
+                    //"FechadePartida", // Nueva columna FechadePartida
+                  //  "UbicacionJugador" // Nueva columna UbicacionJugador
             };
 
             String selection = COLUMN_JUGADOR_ID + " = ?";
@@ -194,8 +339,11 @@ public class Database extends SQLiteOpenHelper {
                 String partidaId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTIDA_ID)));
                 String jugadorId = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_JUGADOR_ID)));
                 String ganancias = String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS)));
+                String fechaPartida = cursor.getString(cursor.getColumnIndexOrThrow("FechadePartida"));
+                String ubicacion = cursor.getString(cursor.getColumnIndexOrThrow("UbicacionJugador"));
 
-                partidasJugador.add("En la partida ID :" + partidaId + ", el JugadorID " + jugadorId + " ha ganado " + ganancias);
+                partidasJugador.add("En la partida ID: " + partidaId + ", el Jugador ID " + jugadorId +
+                        " ha ganado " + ganancias + " en la fecha " + fechaPartida + " en " + ubicacion);
             }
 
             cursor.close();
@@ -210,7 +358,7 @@ public class Database extends SQLiteOpenHelper {
     //Carga de datos
 
     // Función para cargar datos de jugadores y partidas
-    public void cargarDatos() {
+    /*public void cargarDatos() {
         // Insertar jugadores
         insertJugador(new Player("1", "jugador1@email.com", "password1", 1000)); // Reemplaza con los valores deseados
         insertJugador(new Player("2", "jugador2@email.com", "password2", 1500)); // Reemplaza con los valores deseados
@@ -220,7 +368,7 @@ public class Database extends SQLiteOpenHelper {
         insertPartida(1, 700); // Estas son partidas del jugador 1
         insertPartida(2, 800); // Aquí asumo que el jugador 2 tiene la ID 2
         insertPartida(2, 1200); // Estas son partidas del jugador 2
-    }
+    }*/
 
 
    // Obtener los datos de un jugador por su ID
@@ -299,4 +447,35 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return jugador;
     }
+
+
+    //PRODUCTO 2
+
+    public List<String> obtenerPartidasConVictoriasPorFechaYUbicacion(String emailJugador, String fecha) {
+        List<String> partidasConVictoriasYUbicacion = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT FechadePartida, UbicacionJugador FROM " + TABLE_PARTIDA +
+                " WHERE " + COLUMN_JUGADOR_ID + " = (SELECT " + COLUMN_ID + " FROM " + TABLE_PLAYER + " WHERE " + COLUMN_EMAIL + " = ?)" +
+                " AND FechadePartida = ? AND " + COLUMN_GANANCIAS + " > 0";
+        String[] selectionArgs = { emailJugador, fecha };
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        while (cursor.moveToNext()) {
+            String fechaPartida = cursor.getString(cursor.getColumnIndexOrThrow("FechadePartida"));
+            String ubicacionJugador = cursor.getString(cursor.getColumnIndexOrThrow("UbicacionJugador"));
+
+            String partidaInfo = "Fecha: " + fechaPartida + ", Ubicación: " + ubicacionJugador;
+            partidasConVictoriasYUbicacion.add(partidaInfo);
+        }
+
+        cursor.close();
+        return partidasConVictoriasYUbicacion;
+    }
+
+
+
+
+
 }

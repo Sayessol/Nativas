@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
@@ -24,21 +25,12 @@ public class Historial extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial); // Así asumimos que el XML se llama "layout_principal"
 
-        // Aquí se hace la referencia a tu botón y se agrega el Listener para cerrar la aplicación
-        Button botonCerrar = findViewById(R.id.botonCerrar);
-        botonCerrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Cierra la aplicación al presionar el botón "Cerrar Aplicación"
-                finish();
-            }
-        });
-
-
         // Recibir los datos del jugador pasados desde la actividad anterior
         Intent intent = getIntent();
         String emailUsuario = intent.getStringExtra("EMAIL_USUARIO");
         String saldo = intent.getStringExtra("SALDO");
+
+
 
         // Mostrar los datos en los TextView correspondientes en la actividad Historial
         TextView emailTextView = findViewById(R.id.emailTextView);
@@ -46,6 +38,19 @@ public class Historial extends Activity {
 
         TextView saldoTextView = findViewById(R.id.saldoTextView);
         saldoTextView.setText(saldo);
+
+        // Aquí se hace la referencia a tu botón y se agrega el Listener para cerrar la aplicación
+        Button botonCerrar = findViewById(R.id.botonCerrar);
+        botonCerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Historial.this, Calendario.class);
+                intent.putExtra("EMAIL_USUARIO", emailUsuario);
+                intent.putExtra("SALDO", saldo);
+                startActivity(intent);
+            }
+        });
+
         // Referencia al ListView
         ListView historialListView = findViewById(R.id.historialListView);
 
@@ -57,23 +62,27 @@ public class Historial extends Activity {
         if (jugador != null) {
             // Obtener el id del jugador
             String idJugador = jugador.getId();
-            // Mostrar el valor de idJugador en un Toast
-            Toast.makeText(getApplicationContext(), "El ID del jugador es: " + idJugador, Toast.LENGTH_LONG).show();
-
             // En tu método dentro del Activity
-            Disposable disposable = database.obtenerPartidasPorIdJugadorRx(idJugador)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(partidasJugador -> {
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(() -> {
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                                    android.R.layout.simple_list_item_1, (List) partidasJugador);
+            // Obtener las partidas del jugador utilizando la función sin RxJava
+            ArrayList<String> partidasJugador = database.obtenerPartidasPorIdJugador(idJugador);
 
-                            historialListView.setAdapter(adapter);
-                        });
-                    }, throwable -> {
-                        // Manejo de errores
-                    });
+// Crear un ArrayAdapter con los datos obtenidos
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, partidasJugador);
+
+// Mostrar cada elemento del adaptador en un Toast y configurar el adaptador en el ListView
+           Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> {
+                for (int i = 0; i < adapter.getCount(); i++) {
+                    final int finalI = i;
+                    handler.postDelayed(() -> {
+                        String item = adapter.getItem(finalI);
+                        if (item != null) {
+                            //Toast.makeText(getApplicationContext(), item, Toast.LENGTH_SHORT).show();
+                        }
+                    }, 1000 * i); // Muestra cada elemento del adaptador cada segundo (1000 ms)
+                }
+                historialListView.setAdapter(adapter);
+            });
 /*
             // Resto del código...
             // Obtener la lista de partidas asociadas al jugador por su id

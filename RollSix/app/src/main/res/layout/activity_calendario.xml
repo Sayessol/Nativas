@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:padding="16dp">
+
+    <!-- Email del jugador en la esquina superior izquierda -->
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="Email del jugador" />
+
+    <!-- Saldo del jugador en la esquina superior derecha -->
+    <TextView
+        android:id="@+id/saldoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="Saldo" />
+
+    <!-- Título: Calendario de Victorias -->
+    <TextView
+        android:id="@+id/textViewTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calendario de Victorias"
+        android:textColor="#FFD700"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_below="@id/emailTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Calendario -->
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewTitulo"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Imagen de la partida -->
+    <ImageView
+        android:id="@+id/imageViewPartida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:layout_below="@id/calendarView"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+
+    <!-- Dos TextView que mostrarán la ubicación y la fecha de victoria -->
+    <TextView
+        android:id="@+id/ubicacionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageViewPartida"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:textColor="#FFFFFF"
+        android:text="Ubicación: " />
+
+    <TextView
+        android:id="@+id/fechaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ubicacionTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:textColor="#FFFFFF"
+        android:text="Fecha: " />
+
+    <!-- Botón Volver -->
+    <Button
+        android:id="@+id/btnVolver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        android:layout_below="@id/imageViewPartida"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+</RelativeLayout>

@@ -4,6 +4,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -12,15 +15,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.Manifest;
 
-import android.widget.Button;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+
 import android.widget.PopupWindow;
 import android.view.Gravity;
 import java.io.File;
@@ -32,22 +39,26 @@ import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LogicaJuego extends AppCompatActivity {
 
     // Variables para almacenar las apuestas (debes configurarlas según tu lógica de apuestas)
+
     private boolean apuestaMayor = true;  // Cambia a false si apuestas menor
     private boolean apuestaMenor = false; // Cambia a true si apuestas menor
     private boolean apuestaIgual = false; // Cambia a true si apuestas igual
-
+    private static final int REQUEST_CODE_LOCATION = 1001;
     private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logica_juego);
-
         // Recibir los datos del jugador pasados desde la actividad anterior
         Intent intent = getIntent();
         String idUsuario = intent.getStringExtra("ID_USUARIO");
@@ -94,9 +105,13 @@ public class LogicaJuego extends AppCompatActivity {
             apuestaIgual = false;
         });
 
+
+
         // configurmos el OnClickListener para el botón con expresión lambda porque me daba alerta
         jugarButton.setOnClickListener(v -> {
             // Obtener la cantidad apostada del EditText
+
+
             String cantidadApostadaStr = editTextNumber.getText().toString();
 
             // Verificar si la cantidad apostada es válida
@@ -134,16 +149,48 @@ public class LogicaJuego extends AppCompatActivity {
             // verificar el resultado del juego
             String resultadoFinal = verificarResultado(num1, num2, cantidadApostada);
 
+
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String fechaActual = dateFormat.format(calendar.getTime());
+
+// Utiliza la ubicación obtenida como sea necesario aquí
+            //Toast.makeText(LogicaJuego.this, "Ubicación: " + ubicacion, Toast.LENGTH_SHORT).show();
+            // Obtener la ubicación actual
+            String ubicacionActual = null;
+// Dentro del método onCreate o en el lugar adecuado donde necesitas la ubicación
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Si no se tienen los permisos, solicitarlos al usuario
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
+            } else {
+                // Si se tienen los permisos, obtener la ubicación
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if (lastKnownLocation != null) {
+                    double latitud = lastKnownLocation.getLatitude();
+                    double longitud = lastKnownLocation.getLongitude();
+
+                    // Aquí puedes utilizar la 'latitud' y 'longitud' obtenidas como necesites
+                    ubicacionActual = latitud + ", " + longitud;
+                } else {
+                    // Si la ubicación es nula, puede deberse a varios motivos, por ejemplo, el GPS desactivado
+                    Toast.makeText(this, "No se pudo obtener la ubicación actual", Toast.LENGTH_SHORT).show();
+                }
+            }
+
             // actualizar la base de datos y el saldoTextView si el jugador ganó
             if (resultadoFinal.equals("¡Ganaste!")) {
                 jugador.setSaldo(jugador.getSaldo() + cantidadApostada);
                 database.updatePlayer(jugador);
 
+
                 // Actualizar saldoTextView
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida"
-                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada));
+                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
 
                 // Mostrar ventana emergente si el jugador ganó
                 createNotification();
@@ -159,7 +206,7 @@ public class LogicaJuego extends AppCompatActivity {
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
                 // Añadir nueva partida a la tabla "partida" con ganancias negativas
-                database.updateHistorial(jugador.getId(), "-" + cantidadApostada);
+                database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
             }
 
             // mostrar resultado en TextView
@@ -191,6 +238,7 @@ public class LogicaJuego extends AppCompatActivity {
             return "Perdiste. Intenta de nuevo.";
         }
     }
+
     private void mostrarVentanaEmergente() {
         // Inflar el diseño de la ventana emergente
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -253,13 +301,26 @@ public class LogicaJuego extends AppCompatActivity {
             MediaScannerConnection.scanFile(this, new String[]{file.getPath()}, null, null);
 
             Toast.makeText(this, "Captura de pantalla guardada en la carpeta 'Pictures/Screenshots'", Toast.LENGTH_SHORT).show();
+
+            Database database = new Database(this);
+            // Obtener el último ID de partida
+            int ultimoIdPartida = database.obtenerUltimoIdPartida();
+
+            // Insertar la ruta en la tabla Ruta
+            if (ultimoIdPartida != -1) {
+                database.insertarRuta(filePath, ultimoIdPartida);
+                Toast.makeText(this, "Ruta de imagen guardada para la última partida registrada", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No se pudo obtener el último ID de partida", Toast.LENGTH_SHORT).show();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error al guardar la captura de pantalla", Toast.LENGTH_SHORT).show();
         }
     }
 
-
+    
     private void createNotification(){
         String NOTIFICATION_ID = "message";
         NotificationManager notificationManager=(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -284,6 +345,5 @@ public class LogicaJuego extends AppCompatActivity {
 
 
     }
-
 
 }
