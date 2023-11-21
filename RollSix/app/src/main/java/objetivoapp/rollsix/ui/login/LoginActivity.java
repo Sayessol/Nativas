@@ -30,6 +30,7 @@ import objetivoapp.rollsix.InstruccionesActivity;
 import objetivoapp.rollsix.Player;
 import objetivoapp.rollsix.R;
 import objetivoapp.rollsix.Registrar;
+import objetivoapp.rollsix.Webview;
 import objetivoapp.rollsix.ui.login.LoginViewModel;
 import objetivoapp.rollsix.ui.login.LoginViewModelFactory;
 import objetivoapp.rollsix.databinding.ActivityLoginBinding;
@@ -175,5 +176,9 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
+    public void openHelpActivity(View view) {
+        Intent intent = new Intent(this, Webview.class);
+        startActivity(intent);
+    }
 
 }
