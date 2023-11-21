@@ -51,11 +51,11 @@
     <ImageView
         android:id="@+id/imageViewPartida"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
         android:layout_below="@id/calendarView"
         android:layout_marginTop="16dp"
-        android:visibility="gone" /> <!-- Configurar la visibilidad a 'visible' cuando haya una imagen que mostrar -->
+        android:visibility="gone" />
 
     <!-- Dos TextView que mostrarán la ubicación y la fecha de victoria -->
     <TextView
