@@ -53,12 +53,11 @@ public class Calendario extends AppCompatActivity {
                 String fechaSeleccionada = year + "-" + (month + 1) + "-" + dayOfMonth; // Formato de fecha a consultar
 
                 // Obtener el ID de la partida para buscar la ruta de la imagen asociada
-                int idPartida = db.obtenerUltimoIdPartidaconRuta();
-                Toast.makeText(Calendario.this, idPartida, Toast.LENGTH_SHORT).show();
-/*
+                int idPartida = db.obtenerUltimoIdPartidaconRuta(fechaSeleccionada);
+
+
 // Verificar si la partida tiene una ruta asociada
                 String rutaImagen = db.obtenerRutaImagenPorIdPartida(idPartida);
-
                        if (rutaImagen != null && !rutaImagen.isEmpty()) {
                             try {
                                 // Cargar la imagen y mostrarla en el ImageView
@@ -76,7 +75,7 @@ public class Calendario extends AppCompatActivity {
                             // Si no hay una ruta de imagen asociada, ocultar el ImageView
                             ImageView imageViewPartida = findViewById(R.id.imageViewPartida);
                             imageViewPartida.setVisibility(View.GONE);
-                        }*/
+                        }
             }
 
 
@@ -88,9 +87,10 @@ public class Calendario extends AppCompatActivity {
         btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Calendario.this, LogicaJuego.class);
-                intent.putExtra("EMAIL_USUARIO", emailUsuario);
-                intent.putExtra("SALDO", String.valueOf(saldo));
+                Player p = db.obtenerJugadorPorEmail(emailUsuario);
+                String s = p.getId();
+                Intent intent = new Intent(Calendario.this, InstruccionesActivity.class);
+                intent.putExtra("ID_USUARIO", s);
                 startActivity(intent);
 
                 // Cierra la actividad actual (Calendario) para reiniciarla al volver a LogicaJuego

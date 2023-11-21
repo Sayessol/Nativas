@@ -58,11 +58,10 @@ public class Database extends SQLiteOpenHelper {
                 + "FOREIGN KEY (" + COLUMN_JUGADOR_ID + ") REFERENCES " + TABLE_PLAYER + "(" + COLUMN_ID + ")"
                 + ")";
         db.execSQL(CREATE_PARTIDA_TABLE);
-        // Crear la tabla "ruta" para asociar rutas de imagen con partidas
 
-        // Crear la tabla "partida" para el historial
+        // Crear la tabla "ruta" para asociar rutas de imagen con partidas
         String CREATE_RUTA_TABLE = "CREATE TABLE " + TABLE_RUTA + "("
-                + COLUMN_PARTIDA_IDR + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_PARTIDA_IDR + " INTEGER,"
                 + COLUMN_RUTA_ID + " TEXT NOT NULL,"
                 + "FOREIGN KEY (" + COLUMN_PARTIDA_IDR + ") REFERENCES " + TABLE_PARTIDA + "(" + COLUMN_PARTIDA_ID + ")"
                 + ")";
@@ -90,10 +89,10 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("idRuta", idRuta);
-        values.put("idPartida", idPartida);
+        values.put(COLUMN_PARTIDA_IDR, idPartida);
+        values.put(COLUMN_RUTA_ID, idRuta);
 
-        long resultado = db.insert("Ruta", null, values);
+        long resultado = db.insert(TABLE_RUTA, null, values);
         db.close();
     }
 
@@ -117,19 +116,21 @@ public class Database extends SQLiteOpenHelper {
         return ultimoIdPartida;
     }
 
-    public int obtenerUltimoIdPartidaconRuta() {
+    public int obtenerUltimoIdPartidaconRuta(String fechaSeleccionada) {
         SQLiteDatabase db = this.getReadableDatabase();
         int ultimoIdPartida = -1;
 
-        String query = "SELECT MAX(p." + COLUMN_PARTIDA_ID + ") AS UltimoIdPartida FROM " + TABLE_PARTIDA + " p " +
+        String query = "SELECT DISTINCT p." + COLUMN_PARTIDA_ID + " FROM " + TABLE_PARTIDA + " p " +
                 "INNER JOIN " + TABLE_RUTA + " r ON p." + COLUMN_PARTIDA_ID + " = r." + COLUMN_PARTIDA_IDR +
-                " WHERE r.COLUMN_RUTA_ID  IS NOT NULL";
+                " WHERE FechadePartida = ?"; // Agregar la comparación de fechas aquí
 
-        Cursor cursor = db.rawQuery(query, null);
+        String[] selectionArgs = {fechaSeleccionada}; // Pasar la fecha seleccionada como argumento
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
 
         if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                int columnIndex = cursor.getColumnIndex("UltimoIdPartida");
+            if (cursor.moveToLast()) {
+                int columnIndex = cursor.getColumnIndex(COLUMN_PARTIDA_ID);
                 if (columnIndex != -1) {
                     ultimoIdPartida = cursor.getInt(columnIndex);
                 }
@@ -146,14 +147,14 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String rutaImagen = "";
 
-        String query = "SELECT idRuta FROM Ruta WHERE idPartida = ?";
+        String query = "SELECT " + COLUMN_RUTA_ID + " FROM " + TABLE_RUTA + " WHERE " + COLUMN_PARTIDA_IDR + " = ?";
         String[] selectionArgs = {String.valueOf(idPartida)};
 
         Cursor cursor = db.rawQuery(query, selectionArgs);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                int columnIndex = cursor.getColumnIndex("idRuta");
+                int columnIndex = cursor.getColumnIndex(COLUMN_RUTA_ID);
                 if (columnIndex != -1) {
                     rutaImagen = cursor.getString(columnIndex);
                 }
@@ -163,6 +164,7 @@ public class Database extends SQLiteOpenHelper {
 
         return rutaImagen;
     }
+
 
 
 
