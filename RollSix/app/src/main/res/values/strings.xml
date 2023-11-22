@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">RollSix</string>
     <string name="title_activity_login">Accede o crea tu cuenta aqui </string>
-    <string name="prompt_email">Email</string>
+    <string name="prompt_email">Correo electronico</string>
     <string name="prompt_password">Contraseña</string>
     <string name="action_sign_in">Iniciar sesion</string>
     <string name="action_sign_in_short">Registrate</string>
@@ -77,6 +77,7 @@
     <string name="regisPagecontra">Contraseña</string>
     <string name="regisPageRepcontra">Repetir Contraseña</string>
     <string name="Confirmar">Confirmar</string>
+    <string name="Ayuda">Ayuda</string>
 
 
 </resources>

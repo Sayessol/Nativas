@@ -10,7 +10,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="title_activity_historial">Historial</string>
+    <string name="title_activity_historial">Record</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -78,5 +78,6 @@
     <string name="regisPagecontra">Password</string>
     <string name="regisPageRepcontra">Repeat password</string>
     <string name="Confirmar">Confirm</string>
+    <string name="Ayuda">Help</string>
 
 </resources>
