@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RollSix</string>
-    <string name="title_activity_login">Access or create your account</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Login</string>
-    <string name="action_sign_in_short">Sign up</string>
-    <string name="welcome">"Welcome!"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="title_activity_historial">Record</string>
+    <string name="title_activity_login">Accédez ou créez votre compte ici </string>
+    <string name="prompt_email">Courrier électronique</string>
+    <string name="prompt_password">Mot de passe</string>
+    <string name="action_sign_in">commencer la session</string>
+    <string name="action_sign_in_short">Inscrivez-vous ici</string>
+    <string name="welcome">"Accueillir!"</string>
+    <string name="invalid_username">Utilisateur invalide</string>
+    <string name="invalid_password">Le mot de passe doit contenir plus de >5 caractères</string>
+    <string name="login_failed">"Erreur d'identification"</string>
+    <string name="title_activity_historial">Enregistrer</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-    <string name="resultado_partida">The result was %1$d the first given being %2$d and the second being  %3$d</string>
-    <string name="resultado_aqui">Result here</string>
-    <string name="jugar">Play</string>
+    <string name="next">Suivant</string>
+    <string name="previous">Ancien</string>
+    <string name="resultado_partida">Le résultat était %1$d, le premier dé étant %2$d et le second étant %3$d</string>
+    <string name="resultado_aqui">Résultat</string>
+    <string name="jugar">Jouer</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -59,32 +59,33 @@
     <string name="title_activity_instrucciones">Instructions</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="fullscreen_content">Dice game with two dice</string>
-    <string name="textView"> - Bet based on whether the result is greater or less than 6</string>
-    <string name="textView2"> - Place the bet and enter the amount on the line</string>
-    <string name="textView3"> - Select the bet option you want:</string>
-    <string name="textView4">                   - GREATER OR LESS THAN 6:</string>
-    <string name="textView5"> - Roll the dice and wait for the result</string>
-    <string name="textView8"> - If your bet was higher and the result is higher: YOU HAVE WON! But if the result is less... you lost.</string>
-    <string name="nextButton"> - If your bet is lower and the result is lower: YOU HAVE WON! But if the result is higher... you lost.</string>
-    <string name="mayorBtn">Greater than 6</string>
-    <string name="menorBtn">Less than 6</string>
-    <string name="Insertar">INSERT YOUR BET</string>
-    <string name="editTextNumber2">PLACE YOUR BET</string>
-    <string name="Historial">Record</string>
-    <string name="Repetir">Play again</string>
-    <string name="regisPage">SIGN UP</string>
-    <string name="regisPagemail">Email</string>
-    <string name="regisPagecontra">Password</string>
-    <string name="regisPageRepcontra">Repeat password</string>
-    <string name="Confirmar">Confirm</string>
-    <string name="Ayuda">Help</string>
-    <string name="Captura">Screenshot</string>
-    <string name="Cerrar">Close</string>
-    <string name="EmailJugador">Player email</string>
-    <string name="Saldo">Balance</string>
-    <string name="Calendario">Victory calendar</string>
-    <string name="Volver">Back</string>
-    <string name="IrCalendario">Go to calendar</string>
+    <string name="fullscreen_content">Jeu de dés avec deux dés</string>
+    <string name="textView"> - Pariez selon que le résultat est supérieur ou inférieur à 6</string>
+    <string name="textView2"> - Placez le pari et entrez le montant dans la case</string>
+    <string name="textView3"> - Sélectionnez l option de pari que vous souhaitez:</string>
+    <string name="textView4">          - SUPÉRIEUR OU INFÉRIEUR À 6:</string>
+    <string name="textView5"> - Lancez les dés et attendez le résultat</string>
+    <string name="textView8"> - Votre mise est plus élevée et le résultat est plus élevé : VOUS AVEZ GAGNÉ ! Était-ce le contraire ?... vous avez perdu.</string>
+    <string name="nextButton"> - Votre mise est inférieure et le résultat est inférieur : VOUS AVEZ GAGNÉ ! Était-ce le contraire ?... vous avez perdu.</string>
+    <string name="mayorBtn">Supérieur à 6</string>
+    <string name="menorBtn">Moins de 6</string>
+    <string name="Insertar">INSÉREZ VOTRE PARI</string>
+    <string name="editTextNumber2">PARI</string>
+    <string name="Historial">Enregistrer</string>
+    <string name="Repetir">Rejouer</string>
+    <string name="regisPage">S INSCRIRE</string>
+    <string name="regisPagemail">Courrier électronique</string>
+    <string name="regisPagecontra">Mot de passe</string>
+    <string name="regisPageRepcontra">Répéter le mot de passe</string>
+    <string name="Confirmar">Confirmer</string>
+    <string name="Ayuda">Aide</string>
+    <string name="Captura">Prendre une capture d écran</string>
+    <string name="Cerrar">Fermer</string>
+    <string name="EmailJugador">E-mail du joueur</string>
+    <string name="Saldo">Solde</string>
+    <string name="Calendario">Calendrier des victoires</string>
+    <string name="Volver">Revenir</string>
+    <string name="IrCalendario">Aller au calendrier</string>
+
 
 </resources>

@@ -11,17 +11,17 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:padding="8dp"
-        android:text="Email del jugador" />
+        android:text="@string/EmailJugador" />
 
     <!-- Saldo del jugador en la esquina superior derecha -->
     <TextView
         android:id="@+id/saldoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:padding="8dp"
-        android:text="Saldo" />
+        android:text="@string/Saldo" />
 
     <!-- Título "Historial" más grande y centrado en la parte superior -->
     <TextView
@@ -49,6 +49,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Ir al Calendario" />
+        android:text="@string/IrCalendario" />
 
 </RelativeLayout>

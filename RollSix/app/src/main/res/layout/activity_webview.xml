@@ -7,14 +7,17 @@
     tools:context=".Webview">
 
     <!-- Este es el WebView, asegúrate de que está definido correctamente -->
+
     <WebView
         android:id="@+id/webView"
         android:layout_width="404dp"
         android:layout_height="724dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.428">
 
     </WebView>
 
