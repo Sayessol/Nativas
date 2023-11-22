@@ -78,6 +78,13 @@
     <string name="regisPageRepcontra">Repetir Contraseña</string>
     <string name="Confirmar">Confirmar</string>
     <string name="Ayuda">Ayuda</string>
+    <string name="Captura">Capturar pantalla</string>
+    <string name="Cerrar">Cerrar</string>
+    <string name="EmailJugador">Email del jugador</string>
+    <string name="Saldo">Saldo</string>
+    <string name="Calendario">Calendario de victorias</string>
+    <string name="Volver">Volver</string>
+    <string name="IrCalendario">Ir al calendario</string>
 
 
 </resources>
