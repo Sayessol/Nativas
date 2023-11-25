@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Webview">
 
-    <!-- Este es el WebView, asegúrate de que está definido correctamente -->
-
     <WebView
         android:id="@+id/webView"
         android:layout_width="404dp"
