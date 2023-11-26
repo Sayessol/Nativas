@@ -199,6 +199,10 @@ public class LogicaJuego extends AppCompatActivity {
                 // Añadir nueva partida a la tabla "partida"
                 database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
 
+                mediaPlayer = MediaPlayer.create(this, R.raw.sonidovictoria);
+
+                mediaPlayer.start();
+
                 // Mostrar ventana emergente si el jugador ganó
                 createNotification();
                 mostrarVentanaEmergente();
@@ -214,6 +218,10 @@ public class LogicaJuego extends AppCompatActivity {
 
                 // Añadir nueva partida a la tabla "partida" con ganancias negativas
                 database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
+
+                mediaPlayer = MediaPlayer.create(this, R.raw.sonidoderrota);
+
+                mediaPlayer.start();
             }
 
             // mostrar resultado en TextView
