@@ -57,6 +57,8 @@ public class LogicaJuego extends AppCompatActivity {
     private PopupWindow popupWindow;
 
     MediaPlayer mediaPlayer;
+    private Button btnMusica;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +244,23 @@ public class LogicaJuego extends AppCompatActivity {
 
         });
 
+        MediaPlayer mediaPlayer = MainActivity.obtenerMediaPlayer();
 
+        btnMusica = findViewById(R.id.btnMusica);
+
+
+        btnMusica.setOnClickListener(v -> {
+            // Toggle para activar o desactivar la música
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isPlaying()) {
+                    // Pausar la música si está reproduciendo
+                    MainActivity.controlarReproduccionMusica(mediaPlayer, false);
+                } else {
+                    // Reanudar la música si está pausada
+                    MainActivity.controlarReproduccionMusica(mediaPlayer, true);
+                }
+            }
+        });
 
     }
 

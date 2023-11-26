@@ -89,7 +89,7 @@ public class Calendario extends AppCompatActivity {
             public void onClick(View v) {
                 Player p = db.obtenerJugadorPorEmail(emailUsuario);
                 String s = p.getId();
-                Intent intent = new Intent(Calendario.this, InstruccionesActivity.class);
+                Intent intent = new Intent(Calendario.this, LogicaJuego.class);
                 intent.putExtra("ID_USUARIO", s);
                 startActivity(intent);
 

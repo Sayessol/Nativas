@@ -1,5 +1,6 @@
 <!-- activity_logica_juego.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -119,5 +120,20 @@
         android:layout_marginRight="30dp"
         android:scaleType="centerCrop"
         android:src="@drawable/transpdices" />
+
+    <Button
+        android:id="@+id/btnMusica"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="-6dp"
+        android:layout_marginEnd="90dp"
+        android:layout_toStartOf="@+id/saldoTextView"
+        android:backgroundTint="#00FFFFFF"
+        android:stateListAnimator="@anim/nav_default_enter_anim"
+        android:text="Musica"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:iconTint="@color/black_overlay" />
 
 </RelativeLayout>
