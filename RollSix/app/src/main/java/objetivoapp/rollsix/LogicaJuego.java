@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -54,6 +55,8 @@ public class LogicaJuego extends AppCompatActivity {
     private boolean apuestaIgual = false; // Cambia a true si apuestas igual
     private static final int REQUEST_CODE_LOCATION = 1001;
     private PopupWindow popupWindow;
+
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +183,10 @@ public class LogicaJuego extends AppCompatActivity {
                 }
             }
 
+            mediaPlayer = MediaPlayer.create(this, R.raw.sonidodadoseditado);
+
+            mediaPlayer.start();
+
             // actualizar la base de datos y el saldoTextView si el jugador ganó
             if (resultadoFinal.equals("¡Ganaste!")) {
                 jugador.setSaldo(jugador.getSaldo() + cantidadApostada);
@@ -222,7 +229,13 @@ public class LogicaJuego extends AppCompatActivity {
                 // Finalizar la actividad actual (LogicaJuego)
                 finish();
             }, 8000); // Ajusta el tiempo de demora según tus preferencias
+
+
+
         });
+
+
+
     }
 
     // método para verificar el resultado del juego
