@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -54,6 +55,10 @@ public class LogicaJuego extends AppCompatActivity {
     private boolean apuestaIgual = false; // Cambia a true si apuestas igual
     private static final int REQUEST_CODE_LOCATION = 1001;
     private PopupWindow popupWindow;
+
+    MediaPlayer mediaPlayer;
+    private Button btnMusica;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +185,10 @@ public class LogicaJuego extends AppCompatActivity {
                 }
             }
 
+            mediaPlayer = MediaPlayer.create(this, R.raw.sonidodadoseditado);
+
+            mediaPlayer.start();
+
             // actualizar la base de datos y el saldoTextView si el jugador ganó
             if (resultadoFinal.equals("¡Ganaste!")) {
                 jugador.setSaldo(jugador.getSaldo() + cantidadApostada);
@@ -191,6 +200,10 @@ public class LogicaJuego extends AppCompatActivity {
 
                 // Añadir nueva partida a la tabla "partida"
                 database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
+
+                mediaPlayer = MediaPlayer.create(this, R.raw.sonidovictoria);
+
+                mediaPlayer.start();
 
                 // Mostrar ventana emergente si el jugador ganó
                 createNotification();
@@ -207,6 +220,10 @@ public class LogicaJuego extends AppCompatActivity {
 
                 // Añadir nueva partida a la tabla "partida" con ganancias negativas
                 database.updateHistorial(jugador.getId(), String.valueOf(cantidadApostada), fechaActual, ubicacionActual);
+
+                mediaPlayer = MediaPlayer.create(this, R.raw.sonidoderrota);
+
+                mediaPlayer.start();
             }
 
             // mostrar resultado en TextView
@@ -222,7 +239,29 @@ public class LogicaJuego extends AppCompatActivity {
                 // Finalizar la actividad actual (LogicaJuego)
                 finish();
             }, 8000); // Ajusta el tiempo de demora según tus preferencias
+
+
+
         });
+
+        MediaPlayer mediaPlayer = MainActivity.obtenerMediaPlayer();
+
+        btnMusica = findViewById(R.id.btnMusica);
+
+
+        btnMusica.setOnClickListener(v -> {
+            // Toggle para activar o desactivar la música
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isPlaying()) {
+                    // Pausar la música si está reproduciendo
+                    MainActivity.controlarReproduccionMusica(mediaPlayer, false);
+                } else {
+                    // Reanudar la música si está pausada
+                    MainActivity.controlarReproduccionMusica(mediaPlayer, true);
+                }
+            }
+        });
+
     }
 
     // método para verificar el resultado del juego
