@@ -265,6 +265,36 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
+    public int obtenerGananciaMasAltaPorIdJugador(String idJugador) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                COLUMN_GANANCIAS
+        };
+
+        String selection = COLUMN_JUGADOR_ID + " = ?";
+        String[] selectionArgs = {idJugador};
+
+        Cursor cursor = db.query(
+                TABLE_PARTIDA,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_GANANCIAS + " DESC", // Ordenar por ganancias en orden descendente
+                "1" // Limitar el resultado a 1 fila para obtener la ganancia más alta
+        );
+
+        int gananciaMasAlta = 0;
+
+        if (cursor.moveToFirst()) {
+            gananciaMasAlta = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS));
+        }
+
+        cursor.close();
+        return gananciaMasAlta;
+    }
 
 
     // Actualizar la función de obtener partidas por ID del jugador para incluir FechadePartida y UbicacionJugador
