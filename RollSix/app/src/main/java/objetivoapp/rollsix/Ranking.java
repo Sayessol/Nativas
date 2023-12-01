@@ -4,13 +4,22 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+
 import android.widget.Toast;
+
+import java.util.List;
 
 public class Ranking extends Activity {
 
     private Database database;
+    private ListView listView;
+    private ArrayAdapter<Integer> adapter;
+    private BackendManager backendManager;
+    private List<Integer> topTenList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +44,22 @@ public class Ranking extends Activity {
             TextView saldoTextView = findViewById(R.id.saldoTextView);
             saldoTextView.setText(String.valueOf(jugador.getSaldo()));
 
+            // Inicialización del ListView y Adapter
+            listView = findViewById(R.id.rankingListView);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+            listView.setAdapter(adapter);
+
+            backendManager = new BackendManager();
+
+            // Obtener y mostrar el top ten al inicio
+            actualizarTopTen();
+            manejarNuevaGanancia(gananciaMasAlta);
+
+
+
+
+
+
             // Manejo del botón "Volver" para regresar a la pantalla de instrucciones
             Button botonVolver = findViewById(R.id.botonVolver);
             botonVolver.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +70,33 @@ public class Ranking extends Activity {
                     intent.putExtra("ID_USUARIO", p.getId());
                     startActivity(intent);
                 }
+                // Método para actualizar el top ten y el ListView
+
+                // Método para manejar la nueva ganancia más alta
+
             });
+        }
+
+        }
+
+    private void actualizarTopTen() {
+        // Obtener el top ten del backend
+        topTenList = backendManager.obtenerTopTen();
+
+        // Limpiar y actualizar el ListView
+        adapter.clear();
+        adapter.addAll(topTenList);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void manejarNuevaGanancia(int nuevaGanancia) {
+        // Comprobar si la nueva ganancia entra en el top ten
+        if (nuevaGanancia > topTenList.get(topTenList.size() - 1)) {
+            // Enviar la nueva ganancia al backend
+            backendManager.enviarGananciaMasAlta(nuevaGanancia);
+
+            // Actualizar el top ten y el ListView
+            actualizarTopTen();
         }
     }
 }
