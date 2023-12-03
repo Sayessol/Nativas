@@ -1,5 +1,7 @@
 package objetivoapp.rollsix;
 
+import static android.app.ProgressDialog.show;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,19 +45,18 @@ public class Ranking extends Activity {
 
             TextView saldoTextView = findViewById(R.id.saldoTextView);
             saldoTextView.setText(String.valueOf(jugador.getSaldo()));
-
             // Inicialización del ListView y Adapter
             listView = findViewById(R.id.rankingListView);
             adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
             listView.setAdapter(adapter);
 
             backendManager = new BackendManager();
-
+/*
             // Obtener y mostrar el top ten al inicio
             actualizarTopTen();
             manejarNuevaGanancia(gananciaMasAlta);
 
-
+*/
 
 
 
@@ -81,22 +82,45 @@ public class Ranking extends Activity {
 
     private void actualizarTopTen() {
         // Obtener el top ten del backend
-        topTenList = backendManager.obtenerTopTen();
+        backendManager.obtenerTopTen(new BackendManager.TopTenCallback() {
+            @Override
+            public void onSuccess(List<Integer> topTenList) {
+                // Manejar la lista del top ten aquí
+                  adapter.clear();
+                  adapter.addAll(topTenList);
+                  adapter.notifyDataSetChanged();
+            }
 
-        // Limpiar y actualizar el ListView
-        adapter.clear();
-        adapter.addAll(topTenList);
-        adapter.notifyDataSetChanged();
+            @Override
+            public void onFailure() {
+                Toast.makeText(Ranking.this, "Error al obtener el top ten", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
     }
 
     private void manejarNuevaGanancia(int nuevaGanancia) {
         // Comprobar si la nueva ganancia entra en el top ten
         if (nuevaGanancia > topTenList.get(topTenList.size() - 1)) {
-            // Enviar la nueva ganancia al backend
-            backendManager.enviarGananciaMasAlta(nuevaGanancia);
+            // Enviar la nueva ganancia al backend y manejar el resultado
+            backendManager.enviarGananciaMasAlta(nuevaGanancia, new BackendManager.TopTenCallback2() {
+                @Override
+                public void onSuccess() {
+                    // La nueva ganancia se ha enviado y actualizado correctamente en el backend
+                    actualizarTopTen(); // Actualizar el top ten y el ListView
+                }
 
-            // Actualizar el top ten y el ListView
-            actualizarTopTen();
+                @Override
+                public void onFailure() {
+                    // La nueva ganancia no se pudo enviar o actualizar en el backend
+                    Toast.makeText(Ranking.this, "Tu apuesta no ha entrado en el top ten", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // La nueva ganancia no está entre el top ten
+            Toast.makeText(Ranking.this, "Tu apuesta no ha entrado en el top ten", Toast.LENGTH_SHORT).show();
         }
     }
 }
