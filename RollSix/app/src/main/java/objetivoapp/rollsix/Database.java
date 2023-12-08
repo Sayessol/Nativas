@@ -13,8 +13,14 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Database extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "my_database.db";
+    private static final String DATABASE_NAME = "https://rollsix-c5f13-default-rtdb.europe-west1.firebasedatabase.app/";
+
+    // Obtiene la referencia a la base de datos de Firebase
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private static final int DATABASE_VERSION = 2; // Cambia la versión de la base de datos
 
     // Nombres de las tablas y columnas
@@ -72,28 +78,43 @@ public class Database extends SQLiteOpenHelper {
     // Necesitarán modificaciones para adaptarse al nuevo esquema de la base de datos.
     // Por ejemplo, al insertar una partida, deberás insertar en la tabla "partida" con el ID del jugador correspondiente.
 
-    public void insertPartida(int idJugador, int ganancias, String fechaPartida, String ubicacion) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    //public void insertPartida(int idJugador, int ganancias, String fechaPartida, String ubicacion) {
+        //SQLiteDatabase db = this.getWritableDatabase();
+        //ContentValues values = new ContentValues();
+        //values.put(COLUMN_JUGADOR_ID, idJugador);
+        //values.put(COLUMN_GANANCIAS, ganancias);
+        //values.put("FechadePartida", fechaPartida); // Nueva columna FechadePartida
+        //values.put("UbicacionJugador", ubicacion); // Nueva columna UbicacionJugador
+        //long resultado = db.insert(TABLE_PARTIDA, null, values);
+        //db.close();
+    //}
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_JUGADOR_ID, idJugador);
-        values.put(COLUMN_GANANCIAS, ganancias);
-        values.put("FechadePartida", fechaPartida); // Nueva columna FechadePartida
-        values.put("UbicacionJugador", ubicacion); // Nueva columna UbicacionJugador
+    public void insertPartida(String jugadorId, String ganancias) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        long resultado = db.insert(TABLE_PARTIDA, null, values);
-        db.close();
+        // Crear un ID único para la partida utilizando push()
+        String partidaId = databaseReference.child("partidas").push().getKey();
+
+        // Crear un objeto Partida con los datos
+        Partida partida = new Partida(partidaId, jugadorId, ganancias);
+
+        // Guardar la partida en la base de datos
+        databaseReference.child("partidas").child(partidaId).setValue(partida);
     }
 
     public void insertarRuta(String idRuta, int idPartida) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        //SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_PARTIDA_IDR, idPartida);
-        values.put(COLUMN_RUTA_ID, idRuta);
+        //ContentValues values = new ContentValues();
+        //values.put(COLUMN_PARTIDA_IDR, idPartida);
+        //values.put(COLUMN_RUTA_ID, idRuta);
 
-        long resultado = db.insert(TABLE_RUTA, null, values);
-        db.close();
+        //long resultado = db.insert(TABLE_RUTA, null, values);
+        //db.close();
+        DatabaseReference rutasRef = firebaseDatabase.getReference("rutas");
+        DatabaseReference rutaRef = rutasRef.child(String.valueOf(idPartida));
+
+        rutaRef.setValue(idRuta);
     }
 
     public int obtenerUltimoIdPartida() {

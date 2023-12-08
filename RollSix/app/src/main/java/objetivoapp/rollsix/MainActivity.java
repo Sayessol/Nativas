@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
+
 public class MainActivity extends AppCompatActivity {
 
     private static MediaPlayer mediaPlayer;
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
-        
+
         setTheme(R.style.Theme_RollSix);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.setLooping(true);
         // Iniciar la reproducción
         mediaPlayer.start();
+        //Inicializar Firebase
+        FirebaseApp.initializeApp(this);
 
 
     }

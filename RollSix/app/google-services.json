@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "466184863079",
+    "project_id": "rollsix-c5f13",
+    "storage_bucket": "rollsix-c5f13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466184863079:android:e32e6515efb3a1561ac3c2",
+        "android_client_info": {
+          "package_name": "objetivoapp.rollsix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8wqJkDCrVDbWw_KdMZlvinwkd77yqj8s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
