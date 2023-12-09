@@ -60,6 +60,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.google.android.gms:play-services-auth:16.0.1")
+    implementation ("androidx.fragment:fragment:1.3.6")
+
 
 
 }
