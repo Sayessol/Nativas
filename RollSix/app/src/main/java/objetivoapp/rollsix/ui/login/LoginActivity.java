@@ -35,10 +35,34 @@ import objetivoapp.rollsix.ui.login.LoginViewModel;
 import objetivoapp.rollsix.ui.login.LoginViewModelFactory;
 import objetivoapp.rollsix.databinding.ActivityLoginBinding;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+    private static final int RC_SIGN_IN = 9001; // Código de solicitud para el inicio de sesión con Google
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
+
+    private void configureGoogleSignIn() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +79,15 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
 
-// Obtén una referencia al botón de registro
+        mAuth = FirebaseAuth.getInstance(); // Inicializar Firebase Auth
+
+        // Configurar el cliente de inicio de sesión de Google
+        configureGoogleSignIn();
+        Button googleSignInButton = binding.googleSignInButton;
+        googleSignInButton.setOnClickListener(view -> signInWithGoogle());
+
+
+        // Obtén una referencia al botón de registro
         Button registroButton = binding.registro;
 
         // Establece un OnClickListener para el botón de registro
@@ -144,6 +176,46 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void signInWithGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            firebaseAuthWithGoogle(account);
+        } catch (ApiException e) {
+            Toast.makeText(this, "Error en la autenticación con Google", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUiWithUser(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(LoginActivity.this, "Error en la autenticación con Firebase",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void updateUiWithUser(LoggedInUserView model) {
         // Quitar el Toast
         // String welcome = getString(R.string.welcome) + model.getDisplayName();
@@ -179,6 +251,12 @@ public class LoginActivity extends AppCompatActivity {
     public void openHelpActivity(View view) {
         Intent intent = new Intent(this, Webview.class);
         startActivity(intent);
+    }
+
+    private void updateUiWithUser(FirebaseUser user) {
+        // Aquí puedes redirigir al usuario a la siguiente pantalla o realizar otras acciones
+        Toast.makeText(this, "Inicio de sesión exitoso: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+        // Puedes modificar esto según lo que necesites hacer después de iniciar sesión
     }
 
 }
