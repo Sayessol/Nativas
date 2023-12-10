@@ -84,7 +84,7 @@
         android:background="#4285F4"
         android:padding="16dp"
         android:text="Iniciar sesión con Google"
-        android:textColor="#FFFFFF"
+        android:textColor="#212121"
         app:layout_constraintBottom_toTopOf="@id/login"
         tools:layout_editor_absoluteX="16dp" />
 
