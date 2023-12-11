@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -126,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
                     showLoginFailed(loginResult.getError());
                 }
                 if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
+                   // updateUiWithUser(loginResult.getSuccess());
                 }
                 setResult(Activity.RESULT_OK);
 
@@ -190,16 +191,21 @@ public class LoginActivity extends AppCompatActivity {
             handleSignInResult(task);
         }
     }
-
+    // Dentro del método handleSignInResult
+// Dentro del método handleSignInResult
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             firebaseAuthWithGoogle(account);
         } catch (ApiException e) {
-            Toast.makeText(this, "Error en la autenticación con Google", Toast.LENGTH_SHORT).show();
+            Log.e("LoginActivity", "Error en la autenticación con Google: " + e.getStatusCode() + " " + e.getMessage());
+            Toast.makeText(this, "Error en la autenticación con Google: " + e.getStatusCode() + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
+
+
+    // Dentro del método firebaseAuthWithGoogle
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -208,40 +214,25 @@ public class LoginActivity extends AppCompatActivity {
                         FirebaseUser user = mAuth.getCurrentUser();
                         updateUiWithUser(user);
                     } else {
+                        Log.e("LoginActivity", "Error en la autenticación con Firebase: " + task.getException().getMessage());
                         Toast.makeText(LoginActivity.this, "Error en la autenticación con Firebase", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
+    // Dentro del método updateUiWithUser
+    private void updateUiWithUser(FirebaseUser user) {
+        if (user != null) {
+            Log.d("LoginActivity", "Usuario actual: " + user.getEmail());
+            Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Log.e("LoginActivity", "Error: Usuario de Firebase es nulo");
+            Toast.makeText(this, "Error al obtener el usuario de Firebase", Toast.LENGTH_SHORT).show();
+        }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        // Quitar el Toast
-        // String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-
-        //Database database = new Database(this);
-
-        //EditText usernameEditText = binding.username;
-        //EditText passwordEditText = binding.password; // Asegúrate de tener un campo de contraseña en tu diseño
-
-        // Obtener el jugador de la base de datos
-        //Player jugador = database.obtenerJugadorPorEmail(usernameEditText.getText().toString());
-
-        // Verificar si el jugador existe y si la contraseña coincide
-        //if (jugador != null && jugador.getPassword().equals(passwordEditText.getText().toString())) {
-            // Iniciar la actividad de instrucciones
-            //Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
-            //intent.putExtra("ID_USUARIO", jugador.getId());
-            //startActivity(intent);
-
-            // Finalizar la actividad actual (LoginActivity)
-            //finish();
-        //} else {
-            // Mostrar mensaje de error si el jugador no existe o la contraseña no coincide
-            //Toast.makeText(this, "El correo electrónico o la contraseña no coinciden", Toast.LENGTH_SHORT).show();
-        //}
         Database database = new Database(this);
-        FirebaseUser user = mAuth.getCurrentUser();
 
         // Obtener el jugador de la base de datos local
         Player jugador = database.obtenerJugadorPorEmail(user.getEmail());
@@ -269,19 +260,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, Webview.class);
         startActivity(intent);
     }
-
-    private void updateUiWithUser(FirebaseUser user) {
-        if (user != null) {
-            // Iniciar la actividad de instrucciones
-            Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
-            startActivity(intent);
-            finish(); // Finalizar la actividad actual
-        } else {
-            // El usuario de Firebase es nulo, puedes realizar alguna acción adicional si es necesario
-            Toast.makeText(this, "Error al obtener el usuario de Firebase", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
 
 }

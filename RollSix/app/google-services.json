@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "466184863079",
+    "firebase_url": "https://rollsix-c5f13-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "rollsix-c5f13",
     "storage_bucket": "rollsix-c5f13.appspot.com"
   },
@@ -12,7 +13,20 @@
           "package_name": "objetivoapp.rollsix"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "466184863079-hcuaoc2sggb4jgra5r0v5nb1nemcoito.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "objetivoapp.rollsix",
+            "certificate_hash": "1321a322f7f3e01e6c9f90a2e8dc955a7f34a287"
+          }
+        },
+        {
+          "client_id": "466184863079-2hk516470jq0trq26t59i47216pseero.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA8wqJkDCrVDbWw_KdMZlvinwkd77yqj8s"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466184863079-2hk516470jq0trq26t59i47216pseero.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
