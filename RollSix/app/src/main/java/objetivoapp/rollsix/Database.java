@@ -41,17 +41,17 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Crear la tabla "jugador"
         String CREATE_PLAYER_TABLE = "CREATE TABLE " + TABLE_PLAYER + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_ID + " TEXT PRIMARY KEY,"
                 + COLUMN_EMAIL + " TEXT NOT NULL,"
-                + COLUMN_PASSWORD + " TEXT NOT NULL,"
-                + COLUMN_SALDO + " INTEGER NOT NULL"
+                + COLUMN_PASSWORD + " TEXT,"
+                + COLUMN_SALDO + " INTEGER"
                 + ")";
         db.execSQL(CREATE_PLAYER_TABLE);
 
         // Crear la tabla "partida" para el historial
         String CREATE_PARTIDA_TABLE = "CREATE TABLE " + TABLE_PARTIDA + "("
                 + COLUMN_PARTIDA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_JUGADOR_ID + " INTEGER,"
+                + COLUMN_JUGADOR_ID + " TEXT,"
                 + COLUMN_GANANCIAS + " INTEGER,"
                 + "FechadePartida TEXT,"
                 + "UbicacionJugador TEXT,"
@@ -175,19 +175,19 @@ public class Database extends SQLiteOpenHelper {
 
     public void insertJugador(Player player) {
         SQLiteDatabase db = this.getWritableDatabase();
+        String idJugador = String.valueOf(player.getId()); // Convierte el ID a una cadena
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, player.getId());
-        values.put(COLUMN_EMAIL, player.getEmail());
-        values.put(COLUMN_PASSWORD, player.getPassword());
-        values.put(COLUMN_SALDO, player.getSaldo());
+        String query = "INSERT INTO " + TABLE_PLAYER + " (" + COLUMN_ID + ", " + COLUMN_EMAIL + ", " +
+                COLUMN_SALDO + ", " + COLUMN_PASSWORD + ") VALUES ('" +
+                idJugador + "', '" + player.getEmail() + "', " + player.getSaldo() + ", '" +
+                player.getPassword() + "')";
 
-
-        long resultado = db.insert(TABLE_PLAYER, null, values);
+        db.execSQL(query);
 
         //db.close();
-
     }
+
+
 
     public boolean existeJugador(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
