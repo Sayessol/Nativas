@@ -229,7 +229,7 @@ public class LoginActivity extends AppCompatActivity {
             // Obtener el jugador de la base de datos local
             Player jugador = database.obtenerJugadorPorEmail(firebaseUser.getEmail());
 
-            if (jugador == null) {
+            if (!database.existeJugador(firebaseUser.getEmail())) {
                 // Si el jugador no existe, agrégalo a la base de datos local
                 int saldoInicial = 1;
                 jugador = new Player(firebaseUser.getUid(), firebaseUser.getEmail(), "1234", saldoInicial);

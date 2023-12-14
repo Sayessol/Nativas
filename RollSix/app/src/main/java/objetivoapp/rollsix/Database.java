@@ -189,12 +189,12 @@ public class Database extends SQLiteOpenHelper {
 
 
 
-    public boolean existeJugador(String email, String password) {
+    public boolean existeJugador(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = "SELECT * FROM " + TABLE_PLAYER + " WHERE " +
-                COLUMN_EMAIL + " = ? AND " + COLUMN_PASSWORD + " = ?";
-        String[] selectionArgs = {email, password};
+                COLUMN_EMAIL + " = ?";
+        String[] selectionArgs = {email};
 
         Cursor cursor = db.rawQuery(query, selectionArgs);
         boolean jugadorExiste = cursor.getCount() > 0;
