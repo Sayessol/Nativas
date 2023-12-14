@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -35,10 +36,34 @@ import objetivoapp.rollsix.ui.login.LoginViewModel;
 import objetivoapp.rollsix.ui.login.LoginViewModelFactory;
 import objetivoapp.rollsix.databinding.ActivityLoginBinding;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+    private static final int RC_SIGN_IN = 9001; // Código de solicitud para el inicio de sesión con Google
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
+
+    private void configureGoogleSignIn() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +80,15 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
 
-// Obtén una referencia al botón de registro
+        mAuth = FirebaseAuth.getInstance(); // Inicializar Firebase Auth
+
+        // Configurar el cliente de inicio de sesión de Google
+        configureGoogleSignIn();
+        Button googleSignInButton = binding.googleSignInButton;
+        googleSignInButton.setOnClickListener(view -> signInWithGoogle());
+
+
+        // Obtén una referencia al botón de registro
         Button registroButton = binding.registro;
 
         // Establece un OnClickListener para el botón de registro
@@ -144,21 +177,65 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        // Quitar el Toast
-        // String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+    private void signInWithGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
 
-        Database database = new Database(this);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        EditText usernameEditText = binding.username;
-        EditText passwordEditText = binding.password; // Asegúrate de tener un campo de contraseña en tu diseño
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
 
-        // Obtener el jugador de la base de datos
-        Player jugador = database.obtenerJugadorPorEmail(usernameEditText.getText().toString());
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            firebaseAuthWithGoogle(account);
+        } catch (ApiException e) {
+            Toast.makeText(this, "Error en la autenticación con Google", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-        // Verificar si el jugador existe y si la contraseña coincide
-        if (jugador != null && jugador.getPassword().equals(passwordEditText.getText().toString())) {
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUiWithUser(user);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Error en la autenticación con Firebase", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+        private void updateUiWithUser(Object user) {
+            Database database = new Database(this);
+
+        if (user instanceof LoggedInUserView) {
+            // Este bloque se ejecuta si el usuario es de tipo LoggedInUserView
+            LoggedInUserView loggedInUser = (LoggedInUserView) user;
+            // Puedes utilizar loggedInUser para obtener la información necesaria
+        } else if (user instanceof FirebaseUser) {
+            // Este bloque se ejecuta si el usuario es de tipo FirebaseUser
+            FirebaseUser firebaseUser = (FirebaseUser) user;
+
+            // Obtener el jugador de la base de datos local
+            Player jugador = database.obtenerJugadorPorEmail(firebaseUser.getEmail());
+
+            if (!database.existeJugador(firebaseUser.getEmail())) {
+                // Si el jugador no existe, agrégalo a la base de datos local
+                int saldoInicial = 1;
+                jugador = new Player(firebaseUser.getUid(), firebaseUser.getEmail(), "1234", saldoInicial);
+                database.insertJugador(jugador);
+            }
+
             // Iniciar la actividad de instrucciones
             Intent intent = new Intent(LoginActivity.this, InstruccionesActivity.class);
             intent.putExtra("ID_USUARIO", jugador.getId());
@@ -167,10 +244,11 @@ public class LoginActivity extends AppCompatActivity {
             // Finalizar la actividad actual (LoginActivity)
             finish();
         } else {
-            // Mostrar mensaje de error si el jugador no existe o la contraseña no coincide
-            Toast.makeText(this, "El correo electrónico o la contraseña no coinciden", Toast.LENGTH_SHORT).show();
+            // Este bloque se ejecuta si el tipo de usuario no es reconocido
+            Toast.makeText(this, "Tipo de usuario no reconocido", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();

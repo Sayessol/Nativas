@@ -18,6 +18,7 @@
     <string name="resultado_partida">El resultado ha sido %1$d siendo el primer dado un %2$d y el segundo %3$d</string>
     <string name="resultado_aqui">Resultado</string>
     <string name="jugar">Jugar</string>
+    <string name="default_web_client_id">466184863079-2hk516470jq0trq26t59i47216pseero.apps.googleusercontent.com</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

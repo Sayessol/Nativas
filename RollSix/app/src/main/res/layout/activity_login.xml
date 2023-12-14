@@ -29,7 +29,7 @@
         android:id="@+id/username"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginTop="280dp"
+        android:layout_marginTop="252dp"
         android:autofillHints="@string/prompt_email"
         android:background="#FFFFFF"
         android:hint="@string/prompt_email"
@@ -37,6 +37,7 @@
         android:selectAllOnFocus="true"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.406"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,7 +45,7 @@
         android:id="@+id/password"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:autofillHints="@string/prompt_password"
         android:background="#FFFFFF"
         android:hint="@string/prompt_password"
@@ -53,6 +54,7 @@
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.187"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
@@ -70,10 +72,21 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.359" />
+        app:layout_constraintVertical_bias="0.516" />
+
+    <Button
+        android:id="@+id/googleSignInButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="#4285F4"
+        android:padding="16dp"
+        android:text="Iniciar sesión con Google"
+        android:textColor="#212121"
+        app:layout_constraintBottom_toTopOf="@id/login"
+        tools:layout_editor_absoluteX="16dp" />
 
     <Button
         android:id="@+id/registro"

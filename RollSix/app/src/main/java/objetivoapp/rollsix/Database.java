@@ -41,17 +41,17 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Crear la tabla "jugador"
         String CREATE_PLAYER_TABLE = "CREATE TABLE " + TABLE_PLAYER + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_ID + " TEXT PRIMARY KEY,"
                 + COLUMN_EMAIL + " TEXT NOT NULL,"
-                + COLUMN_PASSWORD + " TEXT NOT NULL,"
-                + COLUMN_SALDO + " INTEGER NOT NULL"
+                + COLUMN_PASSWORD + " TEXT,"
+                + COLUMN_SALDO + " INTEGER"
                 + ")";
         db.execSQL(CREATE_PLAYER_TABLE);
 
         // Crear la tabla "partida" para el historial
         String CREATE_PARTIDA_TABLE = "CREATE TABLE " + TABLE_PARTIDA + "("
                 + COLUMN_PARTIDA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_JUGADOR_ID + " INTEGER,"
+                + COLUMN_JUGADOR_ID + " TEXT,"
                 + COLUMN_GANANCIAS + " INTEGER,"
                 + "FechadePartida TEXT,"
                 + "UbicacionJugador TEXT,"
@@ -175,26 +175,26 @@ public class Database extends SQLiteOpenHelper {
 
     public void insertJugador(Player player) {
         SQLiteDatabase db = this.getWritableDatabase();
+        String idJugador = String.valueOf(player.getId()); // Convierte el ID a una cadena
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, player.getId());
-        values.put(COLUMN_EMAIL, player.getEmail());
-        values.put(COLUMN_PASSWORD, player.getPassword());
-        values.put(COLUMN_SALDO, player.getSaldo());
+        String query = "INSERT INTO " + TABLE_PLAYER + " (" + COLUMN_ID + ", " + COLUMN_EMAIL + ", " +
+                COLUMN_SALDO + ", " + COLUMN_PASSWORD + ") VALUES ('" +
+                idJugador + "', '" + player.getEmail() + "', " + player.getSaldo() + ", '" +
+                player.getPassword() + "')";
 
-
-        long resultado = db.insert(TABLE_PLAYER, null, values);
+        db.execSQL(query);
 
         //db.close();
-
     }
 
-    public boolean existeJugador(String email, String password) {
+
+
+    public boolean existeJugador(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = "SELECT * FROM " + TABLE_PLAYER + " WHERE " +
-                COLUMN_EMAIL + " = ? AND " + COLUMN_PASSWORD + " = ?";
-        String[] selectionArgs = {email, password};
+                COLUMN_EMAIL + " = ?";
+        String[] selectionArgs = {email};
 
         Cursor cursor = db.rawQuery(query, selectionArgs);
         boolean jugadorExiste = cursor.getCount() > 0;
@@ -265,6 +265,36 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
+    public int obtenerGananciaMasAltaPorIdJugador(String idJugador) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                COLUMN_GANANCIAS
+        };
+
+        String selection = COLUMN_JUGADOR_ID + " = ?";
+        String[] selectionArgs = {idJugador};
+
+        Cursor cursor = db.query(
+                TABLE_PARTIDA,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                COLUMN_GANANCIAS + " DESC", // Ordenar por ganancias en orden descendente
+                "1" // Limitar el resultado a 1 fila para obtener la ganancia más alta
+        );
+
+        int gananciaMasAlta = 0;
+
+        if (cursor.moveToFirst()) {
+            gananciaMasAlta = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GANANCIAS));
+        }
+
+        cursor.close();
+        return gananciaMasAlta;
+    }
 
 
     // Actualizar la función de obtener partidas por ID del jugador para incluir FechadePartida y UbicacionJugador
@@ -319,7 +349,7 @@ public class Database extends SQLiteOpenHelper {
                     COLUMN_JUGADOR_ID,
                     COLUMN_GANANCIAS,
                     //"FechadePartida", // Nueva columna FechadePartida
-                  //  "UbicacionJugador" // Nueva columna UbicacionJugador
+                    //  "UbicacionJugador" // Nueva columna UbicacionJugador
             };
 
             String selection = COLUMN_JUGADOR_ID + " = ?";
@@ -371,7 +401,7 @@ public class Database extends SQLiteOpenHelper {
     }*/
 
 
-   // Obtener los datos de un jugador por su ID
+    // Obtener los datos de un jugador por su ID
     public Player obtenerJugadorPorId(String playerId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Player player = null;
@@ -473,9 +503,4 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return partidasConVictoriasYUbicacion;
     }
-
-
-
-
-
 }

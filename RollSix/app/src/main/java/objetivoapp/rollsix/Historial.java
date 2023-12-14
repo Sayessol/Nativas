@@ -83,6 +83,24 @@ public class Historial extends Activity {
                 }
                 historialListView.setAdapter(adapter);
             });
+
+            // Referencia al botón "Enviar datos al multijugador"
+            Button botonEnviarDatos = findViewById(R.id.botonEnviarDatosMultijugador);
+            botonEnviarDatos.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Obtener las ganancias más altas del historial
+                    int gananciasAltas = database.obtenerGananciaMasAltaPorIdJugador(idJugador);
+                    Toast.makeText(Historial.this, String.valueOf(gananciasAltas), Toast.LENGTH_SHORT).show();
+
+                    // Enviar los datos del jugador y las ganancias altas a la actividad "Ranking"
+                    Intent intent = new Intent(Historial.this, Ranking.class);
+                    intent.putExtra("EMAIL_USUARIO", emailUsuario);
+                    intent.putExtra("GANANCIAS_ALTAS", gananciasAltas);
+                    startActivity(intent);
+                }
+            });
+
 /*
             // Resto del código...
             // Obtener la lista de partidas asociadas al jugador por su id
