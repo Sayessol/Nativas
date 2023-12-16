@@ -6,6 +6,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +77,7 @@ public class Database extends SQLiteOpenHelper {
                 + "FOREIGN KEY (" + COLUMN_PARTIDA_IDR + ") REFERENCES " + TABLE_PARTIDA + "(" + COLUMN_PARTIDA_ID + ")"
                 + ")";
         db.execSQL(CREATE_RUTA_TABLE);
+
     }
 
     // Resto de métodos como insertar jugador, verificar jugador existente, obtener datos del jugador, etc.
@@ -503,4 +515,74 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return partidasConVictoriasYUbicacion;
     }
+        public void actualizarBoteComun(int dineroPerdido) {
+            DatabaseReference boteReference = FirebaseDatabase.getInstance().getReference("Bote");
+
+            // Actualiza el bote común sumando el dinero perdido
+            boteReference.runTransaction(new Transaction.Handler() {
+                @NonNull
+                @Override
+                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                    Integer boteActual = mutableData.getValue(Integer.class);
+                    if (boteActual == null) {
+                        boteActual = 0;
+                    }
+
+                    // Actualiza el bote sumando el dinero perdido
+                    boteActual = boteActual + dineroPerdido;
+
+                    // Guarda el nuevo valor del bote
+                    mutableData.setValue(boteActual);
+
+                    return Transaction.success(mutableData);
+                }
+
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, boolean committed, @Nullable DataSnapshot currentData) {
+                    if (databaseError != null) {
+                        // Maneja errores, si es necesario
+                    } else {
+                        // Operación completada con éxito
+                    }
+                }
+            });
+        }
+
+        public int obtenerCantidadBoteComun() {
+            DatabaseReference boteReference = FirebaseDatabase.getInstance().getReference("Bote");
+
+            // Lee la cantidad actual del bote común
+            boteReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Integer cantidadBote = dataSnapshot.getValue(Integer.class);
+                    if (cantidadBote != null) {
+                        // Maneja la cantidad del bote
+                        entregarBoteAlGanador(cantidadBote);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Maneja errores, si es necesario
+                }
+            });
+
+            return 0; // Valor temporal, puedes cambiarlo según tus necesidades
+        }
+
+        private void entregarBoteAlGanador(int cantidadBote) {
+            // Lógica para entregar el bote al jugador ganador, por ejemplo, actualiza su saldo
+            // ...
+
+            // Vacía el bote después de entregarlo al ganador
+            vaciarBoteComun();
+        }
+
+        public void vaciarBoteComun() {
+            DatabaseReference boteReference = FirebaseDatabase.getInstance().getReference("Bote");
+
+            // Restablece el valor del bote a 0 en Firebase
+            boteReference.setValue(0);
+        }
 }

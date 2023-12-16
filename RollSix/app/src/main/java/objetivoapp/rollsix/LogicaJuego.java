@@ -192,8 +192,11 @@ public class LogicaJuego extends AppCompatActivity {
             // actualizar la base de datos y el saldoTextView si el jugador ganó
             if (resultadoFinal.equals("¡Ganaste!")) {
                 jugador.setSaldo(jugador.getSaldo() + cantidadApostada);
+                int nuevoSaldoBote = database.obtenerCantidadBoteComun();
+                jugador.setSaldo(jugador.getSaldo() + nuevoSaldoBote);
                 database.updatePlayer(jugador);
-
+                // Actualizar saldo del bote a cero después de entregar el premio
+                database.vaciarBoteComun();
 
                 // Actualizar saldoTextView
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
@@ -213,7 +216,11 @@ public class LogicaJuego extends AppCompatActivity {
             // Actualizar la base de datos y el saldoTextView si el jugador perdió
             if (resultadoFinal.equals("Perdiste. Intenta de nuevo.")) {
                 jugador.setSaldo(jugador.getSaldo() - cantidadApostada);
+                database.actualizarBoteComun(cantidadApostada);
                 database.updatePlayer(jugador);
+                //La cantidad apostada va al bote
+
+
 
                 // Actualizar saldoTextView
                 saldoTextView.setText(String.valueOf(jugador.getSaldo()));
