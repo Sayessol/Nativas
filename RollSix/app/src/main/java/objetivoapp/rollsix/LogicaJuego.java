@@ -240,6 +240,7 @@ public class LogicaJuego extends AppCompatActivity {
                 Intent intent2 = new Intent(LogicaJuego.this, Historial.class);
                 intent2.putExtra("EMAIL_USUARIO", jugador.getEmail());
                 intent2.putExtra("SALDO", String.valueOf(jugador.getSaldo()));
+                intent2.putExtra("GANANCIA",cantidadApostada);
                 startActivity(intent2);
 
                 // Finalizar la actividad actual (LogicaJuego)
