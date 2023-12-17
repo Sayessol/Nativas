@@ -191,9 +191,8 @@ public class LogicaJuego extends AppCompatActivity {
 
             // actualizar la base de datos y el saldoTextView si el jugador ganó
             if (resultadoFinal.equals("¡Ganaste!")) {
-                jugador.setSaldo(jugador.getSaldo() + cantidadApostada);
                 int nuevoSaldoBote = database.obtenerCantidadBoteComun();
-                jugador.setSaldo(jugador.getSaldo() + nuevoSaldoBote);
+                jugador.setSaldo(jugador.getSaldo() + cantidadApostada + nuevoSaldoBote); // Suma el bote al saldo del jugador
                 database.updatePlayer(jugador);
                 // Actualizar saldo del bote a cero después de entregar el premio
                 database.vaciarBoteComun();

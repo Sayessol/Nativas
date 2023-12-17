@@ -516,7 +516,7 @@ public class Database extends SQLiteOpenHelper {
         return partidasConVictoriasYUbicacion;
     }
         public void actualizarBoteComun(int dineroPerdido) {
-            DatabaseReference boteReference = FirebaseDatabase.getInstance().getReference("Bote");
+            DatabaseReference boteReference = FirebaseDatabase.getInstance("https://rollsix-c5f13-default-rtdb.europe-west1.firebasedatabase.app/").getReference("Bote");
 
             // Actualiza el bote común sumando el dinero perdido
             boteReference.runTransaction(new Transaction.Handler() {
@@ -548,28 +548,32 @@ public class Database extends SQLiteOpenHelper {
             });
         }
 
-        public int obtenerCantidadBoteComun() {
-            DatabaseReference boteReference = FirebaseDatabase.getInstance().getReference("Bote");
+    public int obtenerCantidadBoteComun() {
+        DatabaseReference boteReference = FirebaseDatabase.getInstance("https://rollsix-c5f13-default-rtdb.europe-west1.firebasedatabase.app/").getReference("Bote");
 
-            // Lee la cantidad actual del bote común
-            boteReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Integer cantidadBote = dataSnapshot.getValue(Integer.class);
-                    if (cantidadBote != null) {
-                        // Maneja la cantidad del bote
-                        entregarBoteAlGanador(cantidadBote);
-                    }
+        final int[] cantidadBote = {0}; // Variable para almacenar la cantidad del bote
+
+        // Lee la cantidad actual del bote común
+        boteReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Integer boteActual = dataSnapshot.getValue(Integer.class);
+                if (boteActual != null) {
+                    // Almacena la cantidad del bote en la variable
+                    cantidadBote[0] = boteActual;
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Maneja errores, si es necesario
-                }
-            });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Maneja errores, si es necesario
+            }
+        });
 
-            return 0; // Valor temporal, puedes cambiarlo según tus necesidades
-        }
+        // Retorna la cantidad del bote
+        return cantidadBote[0];
+    }
+
 
         private void entregarBoteAlGanador(int cantidadBote) {
             // Lógica para entregar el bote al jugador ganador, por ejemplo, actualiza su saldo
@@ -580,7 +584,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void vaciarBoteComun() {
-            DatabaseReference boteReference = FirebaseDatabase.getInstance().getReference("Bote");
+            DatabaseReference boteReference = FirebaseDatabase.getInstance("https://rollsix-c5f13-default-rtdb.europe-west1.firebasedatabase.app/").getReference("Bote");
 
             // Restablece el valor del bote a 0 en Firebase
             boteReference.setValue(0);
