@@ -94,9 +94,11 @@ public class Historial extends Activity {
                     Toast.makeText(Historial.this, String.valueOf(gananciasAltas), Toast.LENGTH_SHORT).show();
 
                     // Enviar los datos del jugador y las ganancias altas a la actividad "Ranking"
+                    int gananciaDelJuego = getIntent().getIntExtra("GANANCIA_JUEGO", 0);
                     Intent intent = new Intent(Historial.this, Ranking.class);
                     intent.putExtra("EMAIL_USUARIO", emailUsuario);
                     intent.putExtra("GANANCIAS_ALTAS", gananciasAltas);
+                    intent.putExtra("GANANCIA_DEL_JUEGO", gananciaDelJuego);
                     startActivity(intent);
                 }
             });

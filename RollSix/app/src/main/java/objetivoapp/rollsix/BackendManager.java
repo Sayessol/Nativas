@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 // Clase para manejar la comunicación con el backend
 public class BackendManager {
-    private static final String BASE_URL = "URL_DEL_BACKEND"; // Reemplaza con la URL de tu backend
+    private static final String BASE_URL = "https://rollsix-c5f13-default-rtdb.europe-west1.firebasedatabase.app/"; // Reemplaza con la URL de tu backend
 
     private Retrofit retrofit;
     private BackendService backendService;
